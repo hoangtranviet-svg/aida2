@@ -34,8 +34,11 @@ const fail = (what) => e => { console.warn(what, e); emit({ type: 'error', msg: 
 const ERRS = { 'auth/invalid-credential': 'Email hoặc mật khẩu chưa đúng.', 'auth/wrong-password': 'Mật khẩu chưa đúng.', 'auth/user-not-found': 'Không có tài khoản với email này.', 'auth/email-already-in-use': 'Email này đã có tài khoản. Hãy đăng nhập.', 'auth/weak-password': 'Mật khẩu cần ít nhất 6 kí tự.', 'auth/invalid-email': 'Email chưa đúng định dạng.', 'auth/too-many-requests': 'Thử sai quá nhiều lần. Đợi vài phút rồi thử lại.', 'auth/network-request-failed': 'Không kết nối được máy chủ. Kiểm tra mạng.' };
 const nice = e => new Error(ERRS[e?.code] || e?.message || 'Có lỗi xảy ra.');
 
-export async function init(cfg) {
-  CFG = cfg;
+let ADMINS = [];
+const isAdminEmail = e => ADMINS.includes(String(e || '').toLowerCase());
+let uUnsubs = []; let TEACHERS = [];
+export async function init(cfg, admins = []) {
+  CFG = cfg; ADMINS = admins.map(a => a.toLowerCase());
   [A, Au, F] = await Promise.all([import(SDK('app')), import(SDK('auth')), import(SDK('firestore'))]);
   app = A.initializeApp(cfg); auth = Au.getAuth(app);
   try { fs = F.initializeFirestore(app, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) }); } catch (e) { fs = F.getFirestore(app); }
@@ -45,18 +48,26 @@ export async function init(cfg) {
 }
 
 async function onUser(u) {
-  uidCur = u?.uid || null; detach(); C = null; user = null; classList = [];
+  uidCur = u?.uid || null; detach(); C = null; user = null; classList = []; TEACHERS = [];
+  uUnsubs.forEach(f => { try { f(); } catch (e) { /* */ } }); uUnsubs = [];
   if (!u) return;
   const s = await F.getDoc(F.doc(fs, 'users', u.uid)).catch(() => null);
   const d = s?.exists() ? s.data() : { name: u.displayName || u.email, email: u.email, role: 'hs', classes: [] };
-  user = { uid: u.uid, name: d.name, email: d.email, role: d.role, classes: d.classes || [], created: d.created };
+  user = { uid: u.uid, name: d.name, email: d.email, role: d.role, classes: d.classes || [], created: d.created, approved: d.approved === true, rejected: !!d.rejected };
+  // theo dõi trạng thái phê duyệt của chính mình (GV chờ duyệt được mở khoá ngay khi quản trị viên duyệt)
+  if (user.role === 'gv' && !isAdminEmail(user.email)) uUnsubs.push(F.onSnapshot(F.doc(fs, 'users', u.uid), s2 => { if (!s2.exists() || !user) return; const x = s2.data(); const ch = (x.approved === true) !== user.approved || !!x.rejected !== user.rejected; user.approved = x.approved === true; user.rejected = !!x.rejected; if (ch) emit({ type: 'approval' }, false); }, () => {}));
+  // quản trị viên: danh sách tài khoản giáo viên
+  if (isAdminEmail(user.email)) uUnsubs.push(F.onSnapshot(F.query(F.collection(fs, 'users'), F.where('role', '==', 'gv')), s2 => { TEACHERS = s2.docs.map(x => ({ uid: x.id, ...x.data() })); emit({ type: 'approval' }, s2.metadata.hasPendingWrites); }, e => console.warn('Không đọc được danh sách giáo viên', e.code)));
   classList = (await Promise.all(user.classes.map(cid => F.getDoc(F.doc(fs, 'classes', cid)).then(x => x.exists() ? { id: cid, ...x.data() } : null).catch(() => null)))).filter(Boolean);
   const want = lsGet('aida2-fb-cid-' + u.uid); const cid = classList.find(c => c.id === want)?.id || classList[0]?.id;
   if (cid) await openClass(cid);
 }
 
 // ---------- tài khoản ----------
-export const me = () => user && { ...user, classes: classList.map(c => c.id) };
+const pubU = x => ({ ...x, isAdmin: isAdminEmail(x.email), approved: x.role !== 'gv' || x.approved === true || isAdminEmail(x.email), rejected: !!x.rejected });
+export const me = () => user && pubU({ ...user, classes: classList.map(c => c.id) });
+export const teachers = () => TEACHERS.map(pubU).sort((a, b) => (a.approved ? 1 : 0) - (b.approved ? 1 : 0) || (b.created || 0) - (a.created || 0));
+export async function approveTeacher(id, ok) { await F.updateDoc(F.doc(fs, 'users', id), { approved: !!ok, rejected: !ok, reviewedAt: Date.now(), reviewedBy: user.email }).catch(e => { throw new Error('Chưa duyệt được: ' + (e.code || e.message)); }); }
 export const userName = id => members[id]?.name || (C && id === C.teacher ? C.teacherName : user?.uid === id ? user.name : 'Không rõ');
 export const userOf = id => members[id] ? { uid: id, ...members[id], role: 'hs' } : (user?.uid === id ? me() : null);
 
@@ -73,7 +84,7 @@ export async function register({ name, email, password, role, code }) {
   try {
     const cr = await Au.createUserWithEmailAndPassword(auth, email, password).catch(e => { throw nice(e); });
     await Au.updateProfile(cr.user, { displayName: name }).catch(() => {});
-    await F.setDoc(F.doc(fs, 'users', cr.user.uid), { name, email, role, classes: cid ? [cid] : [], created: Date.now() });
+    await F.setDoc(F.doc(fs, 'users', cr.user.uid), { name, email, role, classes: cid ? [cid] : [], created: Date.now(), ...(role === 'gv' ? { approved: false } : {}) });
     if (cid) await F.setDoc(F.doc(fs, 'classes', cid, 'members', cr.user.uid), { name, email, code: CODE, joined: Date.now() });
     await onUser(cr.user);
   } finally { busy = false; }
@@ -88,7 +99,7 @@ export async function login({ email, password, keep = true }) {
   } finally { busy = false; }
   return me();
 }
-export function logout() { flush(); detach(); C = null; user = null; uidCur = null; Au.signOut(auth).catch(() => {}); }
+export function logout() { flush(); detach(); uUnsubs.forEach(f => { try { f(); } catch (e) { /* */ } }); uUnsubs = []; C = null; user = null; uidCur = null; Au.signOut(auth).catch(() => {}); }
 export async function changePassword(oldPw, newPw) {
   if (String(newPw).length < 6) throw new Error('Mật khẩu mới cần ít nhất 6 kí tự.');
   const u = auth.currentUser; try { await Au.reauthenticateWithCredential(u, Au.EmailAuthProvider.credential(u.email, oldPw)); await Au.updatePassword(u, newPw); } catch (e) { throw nice(e); }
@@ -101,6 +112,7 @@ export const myClasses = () => classList.map(c => c.id === C?.id ? C : { ...c, m
 export const cls = () => C;
 export async function switchClass(cid) { lsSet('aida2-fb-cid-' + uidCur, cid); await openClass(cid); emit({ type: 'switch' }, true); }
 export async function createClass({ name, grade = 10, year }) {
+  if (!me().approved) throw new Error('Tài khoản giáo viên chưa được phê duyệt.');
   let code = code6(); for (let i = 0; i < 5 && (await F.getDoc(F.doc(fs, 'codes', code))).exists(); i++) code = code6();
   const ref = F.doc(F.collection(fs, 'classes')); const b = F.writeBatch(fs);
   b.set(ref, { name: name.trim(), grade, year: year || '2026–2027', code, teacher: user.uid, teacherName: user.name, modules: {}, levels: {}, qv: 0, created: Date.now() });

@@ -1,6 +1,6 @@
 // Đăng nhập, đăng kí, bắt đầu (tạo lớp / vào lớp)
 import * as D from '../core/data.js';
-import { $, esc, toast } from '../core/util.js';
+import { $, esc, toast, initials } from '../core/util.js';
 import { ic, LOGO } from '../core/icons.js';
 import { DEMO } from '../core/seed.js';
 import { mountGlobe } from '../core/globe.js';
@@ -59,7 +59,7 @@ const register = {
     el.querySelectorAll('[name=role]').forEach(r => (r.onchange = sync));
     $('#f').onsubmit = async e => {
       e.preventDefault(); $('#err').textContent = '';
-      try { const role = el.querySelector('[name=role]:checked').value; await D.register({ name: $('#name').value, email: $('#email').value, password: $('#pw').value, role, code: $('#code').value }); toast(role === 'gv' ? 'Đã tạo tài khoản. Hãy tạo lớp đầu tiên.' : 'Chào mừng em vào lớp!', 'check'); ctx.go(''); }
+      try { const role = el.querySelector('[name=role]:checked').value; await D.register({ name: $('#name').value, email: $('#email').value, password: $('#pw').value, role, code: $('#code').value }); toast(role === 'gv' ? 'Đã tạo tài khoản giáo viên' : 'Chào mừng em vào lớp!', 'check'); ctx.go(''); }
       catch (er) { $('#err').textContent = er.message; }
     };
     return stop;
@@ -88,4 +88,20 @@ const start = {
     }
   },
 };
-export default { pick: r => r === 'dang-ki' ? register : r === 'bat-dau' ? start : login };
+// GV mới đăng kí: chờ quản trị viên phê duyệt (trang tự chuyển khi được duyệt)
+const waiting = {
+  bare: true, title: 'Chờ phê duyệt',
+  render(el) {
+    const u = D.me();
+    el.innerHTML = `<div class="auth-form" style="min-height:100vh"><div class="auth-card card" style="padding:28px">
+      <a class="logo" href="#">${LOGO}<span><b>AIDA 2.0</b><small>ĐỊA LÍ · LỚP HỌC SỐ</small></span></a>
+      ${u.rejected ? `<div class="note sun">${ic('alert')}<div><b>Tài khoản giáo viên chưa được chấp thuận.</b> Thầy/cô liên hệ quản trị viên của trường để được hỗ trợ.</div></div>`
+        : `<div><span class="pill p-warn">Đang chờ phê duyệt</span><h2 style="margin-top:12px">Tài khoản giáo viên đã được tạo</h2></div>
+      <p class="muted">Để bảo vệ dữ liệu học sinh, mỗi tài khoản giáo viên cần quản trị viên phê duyệt trước khi tạo lớp. Trang này tự chuyển sang lớp học ngay khi tài khoản được duyệt, không cần tải lại.</p>`}
+      <div class="list"><div class="li"><span class="av gv">${esc(initials(u.name))}</span><div class="t"><b>${esc(u.name)}</b><span>${esc(u.email)}</span></div></div></div>
+      <p class="muted" style="font-size:13px">Nếu em là học sinh, hãy đăng xuất và đăng kí lại với vai trò <b>Học sinh</b> bằng mã lớp.</p>
+      <button class="btn block" id="out">${ic('logout')} Đăng xuất</button></div></div>`;
+    $('#out').onclick = () => { D.logout(); location.hash = 'dang-nhap'; };
+  },
+};
+export default { pick: r => r === 'dang-ki' ? register : r === 'bat-dau' ? start : r === 'cho-duyet' ? waiting : login };

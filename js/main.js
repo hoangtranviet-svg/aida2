@@ -18,7 +18,7 @@ const NAV = {
   ],
 };
 const VIEWS = {
-  'gioi-thieu': () => import('./views/landing.js'), 'dang-nhap': () => import('./views/auth.js'), 'dang-ki': () => import('./views/auth.js'), 'bat-dau': () => import('./views/auth.js'),
+  'gioi-thieu': () => import('./views/landing.js'), 'dang-nhap': () => import('./views/auth.js'), 'dang-ki': () => import('./views/auth.js'), 'bat-dau': () => import('./views/auth.js'), 'cho-duyet': () => import('./views/auth.js'), 'quan-tri': () => import('./views/admin.js'),
   'gv-tong-quan': () => import('./views/gv-overview.js'), 'gv-lop': () => import('./views/gv-class.js'), 'gv-mo-dun': () => import('./views/gv-modules.js'), 'gv-bang-tin': () => import('./views/board.js'),
   'gv-bai-giang': () => import('./views/slides.js'), 'gv-ngan-hang': () => import('./views/gv-bank.js'), 'gv-tao-de': () => import('./views/gv-testgen.js'),
   'gv-kiem-tra': () => import('./views/gv-tests.js'), 'gv-phan-tich': () => import('./views/gv-analysis.js'), 'gv-thoi-quen': () => import('./views/gv-habits.js'), 'gv-nhan-xet': () => import('./views/gv-comments.js'), 'gv-bao-cao': () => import('./views/gv-reports.js'),
@@ -56,7 +56,10 @@ async function render() {
   if (u && (route === 'dang-nhap' || route === 'dang-ki')) route = homeOf(u);
   if (u && route.startsWith('gv-') && u.role !== 'gv') route = homeOf(u);
   if (u && route.startsWith('hs-') && u.role !== 'hs') route = homeOf(u);
-  if (u && !D.cls() && !PUBLIC.includes(route) && route !== 'cai-dat') route = 'bat-dau';
+  if (u && route === 'quan-tri' && !u.isAdmin) route = homeOf(u);
+  if (u && u.role === 'gv' && !u.approved) route = 'cho-duyet';
+  else if (u && route === 'cho-duyet') route = homeOf(u);
+  if (u && !D.cls() && !PUBLIC.includes(route) && !['cai-dat', 'cho-duyet', 'quan-tri'].includes(route)) route = 'bat-dau';
   if (route !== (location.hash.slice(1) || '')) history.replaceState(null, '', '#' + route);
   cur.cleanup?.(); cur.cleanup = null;
   cur.route = route;
@@ -86,6 +89,7 @@ function paintShell(u) {
       <div class="side-head"><a class="logo" href="#${homeOf(u)}">${LOGO}<span><b>AIDA 2.0</b><small>ĐỊA LÍ · LỚP HỌC SỐ</small></span></a></div>
       ${c ? `<button class="cls-card" data-act="classes" type="button"><div style="min-width:0"><div class="k">Mã lớp · ${esc(c.code)}</div><b>${esc(c.name)}</b></div><span class="chev">${ic('chevD')}</span></button>` : ''}
       <nav class="nav">${nav.map(([g, items]) => `<div class="nav-g">${g}</div>` + items.map(([r, t, i]) => `<a href="#${r}" class="${cur.route === r ? 'on' : ''}" data-r="${r}">${ic(i)}<span>${t}</span><span class="badge" data-badge="${r}" hidden></span></a>`).join('')).join('')}
+        ${u.isAdmin ? `<div class="nav-g">Quản trị</div><a href="#quan-tri" class="${cur.route === 'quan-tri' ? 'on' : ''}" data-r="quan-tri">${ic('shield')}<span>Duyệt giáo viên</span><span class="badge" data-badge="quan-tri" hidden></span></a>` : ''}
         <div class="nav-g">Tài khoản</div><a href="#cai-dat" class="${cur.route === 'cai-dat' ? 'on' : ''}">${ic('settings')}<span>Cài đặt & dữ liệu</span></a></nav>
       <div class="side-foot"><span class="av ${u.role === 'gv' ? 'gv' : ''}">${esc(initials(u.name))}</span><div class="who"><b>${esc(u.name)}</b><span>${u.role === 'gv' ? 'Giáo viên' : 'Học sinh'}</span></div>
         <button class="icon-btn" data-act="theme" aria-label="Đổi giao diện sáng/tối" data-tip="Giao diện sáng / tối">${ic(document.documentElement.dataset.theme === 'dark' ? 'sun' : 'moon')}</button>
@@ -126,7 +130,9 @@ async function classPicker(u) {
 
 // ---------- huy hiệu số trên menu ----------
 async function paintBadges() {
-  const u = D.me(); const c = D.cls(); if (!u || !c) return;
+  const u = D.me(); const c = D.cls(); if (!u) return;
+  if (u.isAdmin) $$('[data-badge="quan-tri"]').forEach(b => { const n = D.teachers().filter(t => !t.approved && !t.rejected).length; b.hidden = !n; b.textContent = n; });
+  if (!c) return;
   const set = (k, n) => $$(`[data-badge="${k}"]`).forEach(b => { b.hidden = !n; b.textContent = n > 99 ? '99+' : n; });
   const read = c.read?.[u.uid] || 0; const unread = c.posts.filter(p => p.ts > read && p.by !== u.uid).length;
   set('bell', unread); set(u.role === 'gv' ? 'gv-bang-tin' : 'hs-bang-tin', unread);
@@ -138,6 +144,7 @@ async function paintBadges() {
 D.subscribe((why, local) => {
   if (why.type === 'error') { toast(why.msg, 'alert'); return; }
   if (why.type === 'auth') { render(); return; }
+  if (why.type === 'approval') { const u0 = D.me(); if (u0 && u0.role === 'gv' && (cur.route === 'cho-duyet' || !u0.approved) || cur.route === 'quan-tri') { render(); return; } paintBadges(); return; }
   const u = D.me(); if (!u) return;
   if (why.type === 'reset') { location.hash = 'dang-nhap'; render(); return; }
   if (!local && u.role === 'hs' && why.cid === D.cls()?.id) {

@@ -7,3 +7,6 @@ export const FIREBASE = {
   messagingSenderId: '116852857855',
   appId: '1:116852857855:web:0083b2f50bbdb0cd50a5ca',
 };
+
+// Email quản trị viên: duyệt tài khoản giáo viên mới (phải trùng với firestore.rules)
+export const ADMINS = ['hoang.tranviet@wellspring.edu.vn'];

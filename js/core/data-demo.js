@@ -26,7 +26,10 @@ chan && (chan.onmessage = e => reload(e.data?.why || {}));
 addEventListener('storage', e => { if (e.key === KEY) reload({ type: 'storage' }); });
 export const subscribe = fn => (subs.add(fn), () => subs.delete(fn));
 
-export async function init() {
+let ADMINS = ['gv@aida.demo'];
+const isAdminEmail = e => ADMINS.includes(String(e || '').toLowerCase());
+export async function init(cfg, admins = []) {
+  ADMINS = ['gv@aida.demo', ...admins.map(a => a.toLowerCase())];
   db = store.get(KEY);
   if (!db || !db.v) { const { seedDB } = await import('./seed.js'); db = await seedDB(hash); store.set(KEY, db); }
   session = (() => { try { return JSON.parse(sessionStorage.getItem(SKEY)); } catch (e) { return null; } })() || store.get(SKEY + '-keep');
@@ -36,7 +39,7 @@ export async function init() {
 const saveSession = (keep = true) => { try { sessionStorage.setItem(SKEY, JSON.stringify(session)); } catch (e) { /* */ } if (keep) store.set(SKEY + '-keep', session); };
 
 // ---------- tài khoản ----------
-const pub = u => u && ({ uid: u.uid, name: u.name, email: u.email, role: u.role, classes: u.classes || [], created: u.created });
+const pub = u => u && ({ uid: u.uid, name: u.name, email: u.email, role: u.role, classes: u.classes || [], created: u.created, isAdmin: isAdminEmail(u.email), approved: u.role !== 'gv' || u.approved === true || isAdminEmail(u.email), rejected: !!u.rejected });
 export const me = () => session && pub(db.users[session.uid]);
 export const userName = id => db.users[id]?.name || 'Không rõ';
 export const userOf = id => pub(db.users[id]);
@@ -50,7 +53,7 @@ export async function register({ name, email, password, role, code }) {
   if (findEmail(email)) throw new Error('Email này đã có tài khoản. Hãy đăng nhập.');
   let cls = null;
   if (role === 'hs') { cls = classByCode(code); if (!cls) throw new Error('Không tìm thấy lớp với mã này. Hỏi lại thầy/cô mã lớp (6 kí tự).'); }
-  const u = { uid: uid('u'), name, email, role, pw: await hash(password), classes: [], created: Date.now() };
+  const u = { uid: uid('u'), name, email, role, pw: await hash(password), classes: [], created: Date.now(), ...(role === 'gv' ? { approved: isAdminEmail(email) } : {}) };
   db.users[u.uid] = u;
   if (cls) { cls.members.push(u.uid); u.classes.push(cls.id); }
   session = { uid: u.uid, cid: cls?.id || null }; saveSession(); persist({ type: 'user' });
@@ -71,7 +74,7 @@ export const cls = () => session?.cid ? db.classes[session.cid] : null;
 export function switchClass(cid) { session.cid = cid; saveSession(); subs.forEach(f => f({ type: 'switch' }, true)); }
 export function emptyClass(o) { return { id: uid('c'), code: code6(), created: Date.now(), members: [], modules: {}, events: [], attempts: [], tests: [], subs: [], slides: [], posts: [], notes: {}, questions: [], levels: {}, ...o }; }
 export async function createClass({ name, grade = 10, year }) {
-  const u = db.users[session.uid]; const c = emptyClass({ name: name.trim(), grade, year: year || '2026–2027', teacher: u.uid });
+  const u = db.users[session.uid]; if (!me().approved) throw new Error('Tài khoản giáo viên chưa được phê duyệt.'); const c = emptyClass({ name: name.trim(), grade, year: year || '2026–2027', teacher: u.uid });
   while (classByCode(c.code)) c.code = code6();
   db.classes[c.id] = c; u.classes.push(c.id); session.cid = c.id; saveSession(); persist({ type: 'class' }); return c;
 }
@@ -138,3 +141,10 @@ export async function delFile(id) { mem.delete(id); try { const d = await openID
 // dạng dữ liệu cho bộ phân tích cũ
 export function analyticsView(c = cls()) { return { students: students(c), modules: c.modules, events: c.events, attempts: c.attempts }; }
 export const raw = () => db;
+
+// ---------- quản trị: duyệt tài khoản giáo viên ----------
+export const teachers = () => Object.values(db.users).filter(u => u.role === 'gv').map(pub).sort((a, b) => (a.approved ? 1 : 0) - (b.approved ? 1 : 0) || b.created - a.created);
+export async function approveTeacher(id, ok) {
+  if (!me()?.isAdmin) throw new Error('Chỉ quản trị viên được duyệt tài khoản.');
+  const u = db.users[id]; if (!u) return; u.approved = !!ok; u.rejected = !ok; u.reviewedAt = Date.now(); persist({ type: 'approval', uid: id });
+}
