@@ -177,6 +177,35 @@ export const EXTRA = [
   TU('DL10.B20', 'DL10.08.05', 'H', 'Phân tích ảnh hưởng của đô thị hoá đến kinh tế – xã hội và môi trường.',
     [['Tích cực: thúc đẩy tăng trưởng, chuyển dịch cơ cấu kinh tế, tạo việc làm, thay đổi phân bố dân cư, lối sống.', 0.5, ['tich cuc', 'chuyen dich', 'viec lam', 'tang truong']], ['Tiêu cực (đô thị hoá tự phát): thất nghiệp, thiếu nhà ở, ô nhiễm môi trường, ùn tắc giao thông.', 0.5, ['tieu cuc', 'that nghiep', 'nha o', 'o nhiem', 'un tac']]],
     'Tích cực: chuyển dịch cơ cấu kinh tế, việc làm, lối sống. Tiêu cực khi tự phát: thất nghiệp, nhà ở, ô nhiễm, ùn tắc.'),
+  // ===== Bài 13 – Thực hành: chế độ nước sông Hồng
+  DS('DL10.B13', 'DL10.05.03', 'V', 'Lưu lượng nước trung bình tháng của sông Hồng tại trạm Sơn Tây (m³/s): T1: 1 318; T2: 1 100; T3: 914; T4: 1 071; T5: 1 893; T6: 4 692; T7: 7 986; T8: 9 246; T9: 6 690; T10: 4 122; T11: 2 813; T12: 1 746.',
+    ['Lưu lượng nước trung bình năm của sông Hồng tại Sơn Tây khoảng 3 633 m³/s.', 'Mùa lũ kéo dài 5 tháng, từ tháng 6 đến tháng 10.', 'Đỉnh lũ của sông Hồng vào tháng 10.', 'Sông Hồng được cấp nước chủ yếu bởi băng tuyết tan.'],
+    [true, true, false, false], ['E27', 'E17', 'E17', 'E17'], 'Đỉnh lũ vào tháng 8 (9 246 m³/s). Sông Hồng được cấp nước chủ yếu bởi nước mưa.', 3),
+  TL('DL10.B13', 'DL10.05.11', 'V', 'Lưu lượng trung bình tháng 8 của sông Hồng tại Sơn Tây là 9 246 m³/s. Lượng nước chảy qua trạm trong tháng 8 (31 ngày) là bao nhiêu tỉ m³? (làm tròn đến một chữ số thập phân)', '24,8', 0.05, 'tỉ m³', '9 246 × 31 × 86 400 ≈ 24 764 486 400 m³ ≈ 24,8 tỉ m³.', 5),
+  TL('DL10.B13', 'DL10.05.11', 'V', 'Tổng lưu lượng trung bình 12 tháng của sông Hồng tại Sơn Tây là 43 591 m³/s. Lưu lượng nước trung bình năm là bao nhiêu m³/s? (làm tròn đến hàng đơn vị)', '3633', 0.5, 'm³/s', '43 591 : 12 ≈ 3 633 m³/s.', 2),
+  TU('DL10.B13', 'DL10.05.03', 'V', 'Trình bày chế độ nước của sông Hồng và giải thích nguyên nhân.',
+    [['Mùa lũ từ tháng 6 đến tháng 10, đỉnh lũ tháng 8.', 0.25, ['thang 6', 'thang 10', 'thang 8', 'mua lu']], ['Mùa cạn từ tháng 11 đến tháng 5, cạn nhất tháng 3.', 0.25, ['thang 11', 'thang 5', 'thang 3', 'mua can']],
+     ['Giải thích: sông được cấp nước chủ yếu bởi nước mưa; khí hậu nhiệt đới gió mùa, mưa nhiều vào mùa hạ, ít mưa vào mùa đông.', 0.5, ['nuoc mua', 'gio mua', 'mua ha', 'mua dong']]],
+    'Mùa lũ T6 – T10 (đỉnh T8), mùa cạn T11 – T5 (cạn nhất T3), do chế độ mưa mùa của khí hậu nhiệt đới gió mùa.'),
+
+  // ===== Bài 16 – Thực hành: phân bố đất và sinh vật
+  DS('DL10.B16', 'DL10.06.04', 'H', 'Quan sát bản đồ các kiểu thảm thực vật và nhóm đất chính trên thế giới.',
+    ['Đất pốt-dôn phát triển chủ yếu dưới rừng lá kim.', 'Đất đen phân bố chủ yếu ở các thảo nguyên ôn đới.', 'Hoang mạc nhiệt đới có lớp đất dày, giàu mùn.', 'Ranh giới các đới đất gần trùng ranh giới các kiểu thảm thực vật vì cùng chịu tác động của khí hậu.'],
+    [true, true, false, true], ['E32', 'E32', 'E32', 'E22'], 'Hoang mạc khô hạn, thực vật nghèo nên đất mỏng, nghèo mùn (đất xám hoang mạc).', 1),
+  TU('DL10.B16', 'DL10.06.04', 'H', 'Vì sao các nhóm đất và các kiểu thảm thực vật trên thế giới phân bố thành từng đới tương ứng với nhau?',
+    [['Khí hậu (nhiệt, ẩm) thay đổi theo vĩ độ, quyết định cả kiểu thảm thực vật và quá trình hình thành đất.', 0.5, ['khi hau', 'nhiet', 'am', 'vi do']], ['Sinh vật cung cấp chất hữu cơ cho đất; đất là nơi sinh trưởng của thực vật – hai thành phần quan hệ chặt chẽ.', 0.5, ['sinh vat', 'huu co', 'thuc vat', 'chat che']]],
+    'Cùng chịu tác động của khí hậu thay đổi theo vĩ độ và có quan hệ qua lại (sinh vật ↔ đất) nên phân bố thành các đới tương ứng.'),
+
+  // ===== Bài 17 – Vỏ địa lí, quy luật thống nhất và hoàn chỉnh
+  DS('DL10.B17', 'DL10.07.01', 'H', 'Đọc thông tin về vỏ địa lí và vỏ Trái Đất.',
+    ['Vỏ địa lí dày khoảng 30 – 35 km.', 'Ở đại dương, giới hạn dưới của vỏ địa lí là đáy vực thẳm.', 'Vỏ Trái Đất gồm cả khí quyển và thuỷ quyển.', 'Vỏ địa lí và vỏ Trái Đất có chiều dày như nhau.'],
+    [true, true, false, false], ['E33', 'E33', 'E33', 'E33'], 'Vỏ Trái Đất chỉ gồm các tầng đá, dày 5 – 70 km; vỏ địa lí dày khoảng 30 – 35 km.', 2),
+  DS('DL10.B17', 'DL10.07.02', 'V', 'Một vùng núi bị chặt phá rừng đầu nguồn trên diện rộng.',
+    ['Đất ở sườn núi bị xói mòn, rửa trôi mạnh hơn.', 'Vào mùa mưa, lũ ở hạ lưu lên chậm hơn trước.', 'Vào mùa khô, sông suối dễ cạn kiệt hơn.', 'Sự thay đổi chỉ xảy ra với thành phần sinh vật.'],
+    [true, false, true, false], ['E34', 'E34', 'E34', 'E34'], 'Mất rừng → nước chảy tràn nhanh nên lũ lên nhanh hơn; mọi thành phần đều thay đổi theo (quy luật thống nhất và hoàn chỉnh).', 5),
+  TU('DL10.B17', 'DL10.07.02', 'V', 'Lấy ví dụ chứng minh quy luật thống nhất và hoàn chỉnh của vỏ địa lí và nêu ý nghĩa thực tiễn của quy luật.',
+    [['Nêu đúng biểu hiện: một thành phần thay đổi kéo theo các thành phần khác thay đổi.', 0.25, ['thanh phan', 'thay doi', 'keo theo']], ['Ví dụ hợp lí, có chuỗi tác động (vd: phá rừng → đất xói mòn → lũ, cạn kiệt → khí hậu thay đổi).', 0.5, ['pha rung', 'xoi mon', 'lu', 'khi hau']], ['Ý nghĩa: cần nghiên cứu kĩ, toàn diện các thành phần trước khi khai thác, sử dụng tự nhiên.', 0.25, ['nghien cuu', 'toan dien', 'khai thac']]],
+    'Một thành phần thay đổi kéo theo các thành phần khác; ví dụ phá rừng đầu nguồn; cần nghiên cứu toàn diện trước khi khai thác.'),
 ];
 // mã câu: <mục tiêu>-DS01 / -TL01 / -TU01
 const PRE = { ds: 'DS', tln: 'TL', tlu: 'TU' };

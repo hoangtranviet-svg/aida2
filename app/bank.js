@@ -32,6 +32,9 @@ export const ERR = {
   E28: ['Nhầm sự phân bố các vành đai động đất, núi lửa', 'DL10.B08', 2],
   E30: ['Nhầm sự phân bố mưa và nhân tố ảnh hưởng', 'DL10.B09', 9],
   E31: ['Nhầm sự phân bố nhiệt độ không khí', 'DL10.B09', 3],
+  E32: ['Nhầm nhóm đất tương ứng với kiểu thảm thực vật', 'DL10.B16', 1],
+  E33: ['Nhầm vỏ địa lí với vỏ Trái Đất, giới hạn vỏ địa lí', 'DL10.B17', 2],
+  E34: ['Chưa vận dụng được quy luật thống nhất và hoàn chỉnh', 'DL10.B17', 5],
 };
 
 const Q = (m, o, q, a, k, e, x, s) => ({ m, o, q, a, k, e, x, s });
@@ -128,6 +131,25 @@ export const BANK = [
   Q('DL10.B20', 'DL10.08.05', 'Siêu đô thị là đô thị có số dân', ['từ 10 triệu người trở lên', 'từ 1 triệu người trở lên', 'từ 5 triệu người trở lên', 'từ 50 triệu người trở lên'], 0, [null, 'E26', 'E26', 'E26'], 'Phần lớn siêu đô thị hiện nay ở châu Á.', 3),
   Q('DL10.B20', 'DL10.08.09', 'Khu vực nào sau đây có dân cư thưa thớt nhất?', ['Hoang mạc Xa-ha-ra', 'Đồng bằng sông Hằng', 'Tây Âu', 'Đông Bắc Hoa Kỳ'], 0, [null, 'E26', 'E26', 'E26'], 'Khí hậu khô hạn khắc nghiệt, thiếu nước.', 1),
   Q('DL10.B20', 'DL10.08.05', 'Đô thị hoá tự phát, không gắn với công nghiệp hoá dẫn đến', ['thất nghiệp, thiếu nhà ở, ô nhiễm môi trường', 'kinh tế tăng trưởng bền vững', 'giảm dân số thành thị', 'nông thôn phát triển mạnh'], 0, [null, 'E26', 'E26', 'E26'], 'Dân nông thôn đổ về thành phố nhưng thiếu việc làm, hạ tầng.', 4),
+  // Bài 13 – Thực hành: chế độ nước sông Hồng
+  Q('DL10.B13', 'DL10.05.03', 'Dựa vào số liệu lưu lượng nước sông Hồng tại trạm Sơn Tây, mùa lũ của sông Hồng kéo dài từ', ['tháng 6 đến tháng 10', 'tháng 1 đến tháng 5', 'tháng 9 đến tháng 12', 'tháng 4 đến tháng 8'], 0, [null, 'E17', 'E17', 'E17'], 'Các tháng 6 – 10 có lưu lượng lớn hơn lưu lượng trung bình năm (≈ 3 633 m³/s) nên thuộc mùa lũ.', 3),
+  Q('DL10.B13', 'DL10.05.11', 'Theo quy ước, một tháng được xếp vào mùa lũ khi', ['lưu lượng tháng lớn hơn lưu lượng trung bình năm', 'lưu lượng tháng lớn hơn 5 000 m³/s', 'lượng mưa tháng lớn hơn 100 mm', 'trong tháng có ít nhất một trận lũ'], 0, [null, 'E27', 'E17', 'E17'], 'Tháng có lưu lượng vượt lưu lượng trung bình năm thuộc mùa lũ; nhỏ hơn thuộc mùa cạn.', 2),
+  Q('DL10.B13', 'DL10.05.02', 'Nguyên nhân chủ yếu làm mùa lũ của sông Hồng trùng với mùa hạ là', ['chế độ mưa theo mùa của khí hậu nhiệt đới gió mùa', 'băng tuyết tan vào mùa hạ', 'nước ngầm dâng cao vào mùa hạ', 'thuỷ triều lên cao vào mùa hạ'], 0, [null, 'E17', 'E17', 'E18'], 'Sông Hồng được cấp nước chủ yếu bởi nước mưa; mùa hạ gió mùa mang mưa lớn nên lũ.', 4),
+  Q('DL10.B13', 'DL10.05.11', 'Lưu lượng sông Hồng tháng 8 là 9 246 m³/s, tháng 3 là 914 m³/s. Lưu lượng tháng 8 gấp tháng 3 khoảng', ['10 lần', '5 lần', '20 lần', '2 lần'], 0, [null, 'E27', 'E27', 'E27'], '9 246 : 914 ≈ 10,1 lần → chế độ nước phân mùa rõ rệt.', 3),
+  Q('DL10.B13', 'DL10.05.02', 'Biện pháp nào giúp giảm lũ lên đột ngột ở các sông miền núi?', ['Trồng và bảo vệ rừng đầu nguồn', 'Mở rộng diện tích đất trống đồi trọc', 'Khai thác cát trong lòng sông', 'San lấp ao hồ ven sông'], 0, [null, 'E17', 'E17', 'E17'], 'Rừng giữ nước, điều hoà dòng chảy, làm lũ lên chậm và giảm đỉnh lũ.', 4),
+  // Bài 16 – Thực hành: phân bố đất và sinh vật
+  Q('DL10.B16', 'DL10.06.04', 'Nhóm đất pốt-dôn phát triển chủ yếu dưới kiểu thảm thực vật', ['rừng lá kim', 'xa van', 'rừng nhiệt đới ẩm', 'thảo nguyên'], 0, [null, 'E32', 'E32', 'E32'], 'Rừng lá kim (tai-ga) ở vùng ôn đới lạnh đi cùng đất pốt-dôn.', 2),
+  Q('DL10.B16', 'DL10.06.04', 'Đất đen thảo nguyên phân bố chủ yếu ở', ['vùng ôn đới lục địa nửa khô hạn', 'vùng xích đạo', 'vùng cực', 'vùng ven biển nhiệt đới ẩm'], 0, [null, 'E32', 'E32', 'E32'], 'Thảo nguyên ôn đới (Đông Âu, Trung Á, Bắc Mỹ) có đất đen giàu mùn.', 1),
+  Q('DL10.B16', 'DL10.06.04', 'Ở Việt Nam, nhóm đất chiếm diện tích lớn nhất là', ['đất feralit (đỏ vàng)', 'đất pốt-dôn', 'đất đen thảo nguyên', 'đất đài nguyên'], 0, [null, 'E32', 'E32', 'E32'], 'Khí hậu nhiệt đới ẩm gió mùa → quá trình feralit là chủ yếu.', 5),
+  Q('DL10.B16', 'DL10.07.03', 'Đi theo kinh tuyến 20°Đ từ xích đạo lên Bắc Âu, thứ tự các kiểu thảm thực vật đúng là', ['rừng nhiệt đới → xa van → hoang mạc → rừng lá cứng cận nhiệt → rừng lá rộng → rừng lá kim', 'xa van → rừng nhiệt đới → hoang mạc → rừng lá kim → rừng lá rộng', 'rừng lá kim → rừng lá rộng → xa van → hoang mạc', 'hoang mạc → rừng nhiệt đới → xa van → đài nguyên'], 0, [null, 'E24', 'E24', 'E24'], 'Nhiệt, ẩm thay đổi theo vĩ độ nên thảm thực vật thay đổi thành từng đới (quy luật địa đới).', 2),
+  Q('DL10.B16', 'DL10.06.03', 'Nhân tố quyết định sự phân bố các kiểu thảm thực vật theo vĩ độ là', ['khí hậu (nhiệt và ẩm)', 'đá mẹ', 'địa hình', 'con người'], 0, [null, 'E23', 'E23', 'E23'], 'Khí hậu thay đổi theo vĩ độ quyết định kiểu thảm thực vật và cả nhóm đất.', 3),
+  // Bài 17 – Vỏ địa lí, quy luật thống nhất và hoàn chỉnh
+  Q('DL10.B17', 'DL10.07.01', 'Giới hạn trên của vỏ địa lí là', ['nơi tiếp giáp lớp ô-dôn', 'đỉnh tầng đối lưu ở xích đạo', 'giới hạn trên của tầng nhiệt', 'độ cao 100 km'], 0, [null, 'E33', 'E33', 'E33'], 'Vỏ địa lí lên tới nơi tiếp giáp lớp ô-dôn (khoảng 25 km).', 2),
+  Q('DL10.B17', 'DL10.07.01', 'Chiều dày của vỏ địa lí khoảng', ['30 – 35 km', '5 – 70 km', '100 km', '2 900 km'], 0, [null, 'E33', 'E33', 'E33'], '5 – 70 km là độ dày của vỏ Trái Đất; vỏ địa lí dày khoảng 30 – 35 km.', 2),
+  Q('DL10.B17', 'DL10.07.01', 'Điểm khác cơ bản giữa vỏ địa lí và vỏ Trái Đất là vỏ địa lí', ['gồm cả khí, nước, đất, sinh vật và đá', 'chỉ gồm các tầng đá', 'dày hơn vỏ Trái Đất ở mọi nơi', 'nằm hoàn toàn dưới bề mặt đất'], 0, [null, 'E33', 'E33', 'E33'], 'Vỏ Trái Đất chỉ gồm đá; vỏ địa lí là nơi các quyển xâm nhập, tác động lẫn nhau.', 3),
+  Q('DL10.B17', 'DL10.07.02', 'Rừng đầu nguồn bị chặt phá dẫn tới lũ lụt ở hạ lưu là biểu hiện của quy luật', ['thống nhất và hoàn chỉnh', 'địa đới', 'đai cao', 'địa ô'], 0, [null, 'E34', 'E24', 'E24'], 'Một thành phần (sinh vật) thay đổi kéo theo đất, nước, khí hậu thay đổi.', 5),
+  Q('DL10.B17', 'DL10.07.02', 'Nguyên nhân tạo nên quy luật thống nhất và hoàn chỉnh của vỏ địa lí là', ['các thành phần cùng chịu tác động của nội lực, ngoại lực và luôn trao đổi vật chất, năng lượng', 'Trái Đất có dạng hình cầu', 'sự phân bố lục địa và đại dương', 'độ cao địa hình thay đổi'], 0, [null, 'E34', 'E34', 'E34'], 'Các thành phần xâm nhập, trao đổi vật chất – năng lượng nên quy định lẫn nhau.', 4),
+  Q('DL10.B17', 'DL10.07.04', 'Trồng rừng ngập mặn ven biển có tác dụng', ['chắn sóng, giữ đất, tăng nguồn lợi thuỷ sản', 'làm tăng độ mặn của đất', 'làm khô hạn vùng ven biển', 'làm giảm lượng mưa'], 0, [null, 'E34', 'E34', 'E34'], 'Phục hồi một thành phần (sinh vật) cải thiện đất, nước và sinh kế – vận dụng quy luật thống nhất.', 6),
 ];
 BANK.forEach((q, i) => { const n = BANK.slice(0, i).filter(x => x.o === q.o).length + 1; q.id = `${q.o}-Q${String(n).padStart(2, '0')}`; });
 
@@ -144,8 +166,11 @@ export const MODULES = [
   ['DL10.B10', '10', 'Bài 10', 'Các đới và kiểu khí hậu', 'Chương 4 – Khí quyển'],
   ['DL10.B11', '11', 'Bài 11', 'Thuỷ quyển, nước trên lục địa', 'Chương 5 – Thuỷ quyển'],
   ['DL10.B12', '12', 'Bài 12', 'Nước biển và đại dương', 'Chương 5 – Thuỷ quyển'],
+  ['DL10.B13', '13', 'Bài 13', 'Thực hành: Chế độ nước sông Hồng', 'Chương 5 – Thuỷ quyển'],
   ['DL10.B14', '14', 'Bài 14', 'Đất trên Trái Đất', 'Chương 6 – Sinh quyển'],
   ['DL10.B15', '15', 'Bài 15', 'Sinh quyển', 'Chương 6 – Sinh quyển'],
+  ['DL10.B16', '16', 'Bài 16', 'Thực hành: Phân bố đất và sinh vật', 'Chương 6 – Sinh quyển'],
+  ['DL10.B17', '17', 'Bài 17', 'Vỏ địa lí, quy luật thống nhất', 'Chương 7 – Quy luật của vỏ địa lí'],
   ['DL10.B18', '18', 'Bài 18', 'Quy luật địa đới và phi địa đới', 'Chương 7 – Quy luật của vỏ địa lí'],
   ['DL10.B19', '19', 'Bài 19', 'Dân số và cơ cấu dân số', 'Chương 8 – Địa lí dân cư'],
   ['DL10.B20', '20', 'Bài 20', 'Phân bố dân cư và đô thị hoá', 'Chương 8 – Địa lí dân cư'],

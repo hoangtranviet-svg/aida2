@@ -25,7 +25,7 @@ export default {
         <div class="card" style="display:flex;gap:22px;align-items:center;flex-wrap:wrap;background-image:var(--contour);background-size:260px">
           <div class="ring" style="--p:${Math.round(P.pctAvail * 100)}"><div><b>${Math.round(P.pctAvail * 100)}%</b><span>mô-đun đã mở</span></div></div>
           <div style="flex:1;min-width:220px" class="stack"><span class="eyebrow">Chào ${esc(u.name.split(' ').pop())}</span><h2 style="font-size:24px">${P.pctAvail >= .9 ? 'Em đang theo kịp lớp rất tốt!' : P.pctAvail >= .6 ? 'Em đang đi đúng hướng.' : 'Cùng bắt kịp tiến độ của lớp nhé.'}</h2>
-            <div><div class="row between" style="font-size:13px"><span class="muted">Cả năm (16 mô-đun)</span><b class="num">${pct(P.pctYear)}</b></div><div class="prog land" style="margin-top:5px"><i style="width:${P.pctYear * 100}%"></i></div></div></div></div>
+            <div><div class="row between" style="font-size:13px"><span class="muted">Cả năm (${P.mods.length} mô-đun)</span><b class="num">${pct(P.pctYear)}</b></div><div class="prog land" style="margin-top:5px"><i style="width:${P.pctYear * 100}%"></i></div></div></div></div>
         ${next ? `<div class="banner card" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:var(--sun-soft);border-color:transparent"><span class="ic" style="width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--sun);color:var(--on-sun)">${ic(next.kind === 'test' ? 'test' : next.kind === 'remedy' ? 'target' : 'play')}</span>
           <div style="flex:1;min-width:200px"><span class="eyebrow">Việc nên làm tiếp</span><div style="font:650 17px var(--display);margin-top:2px">${esc(next.title)}</div><div class="muted" style="font-size:13px">${esc(next.sub)}</div></div>${dueChip(next.due, false)}
           <button class="btn sun" id="go">${next.kind === 'test' ? 'Làm bài' : 'Bắt đầu'} ${ic('arrowR')}</button></div>` : ''}
@@ -38,7 +38,7 @@ export default {
         <div class="kpis" style="margin:0;grid-template-columns:repeat(2,1fr)">
           <div class="kpi"><span class="k">Chuỗi ngày học</span><span class="v num">${streak}<small> ngày</small></span><span class="d">${sum.days14} ngày học trong 2 tuần</span></div>
           <div class="kpi"><span class="k">Câu trả lời đúng</span><span class="v num">${ok}</span><span class="d">nắm vững TB ${pct(sum.avg)}</span></div>
-          <div class="kpi"><span class="k">Mô-đun hoàn thành</span><span class="v num">${P.nDone}<small>/16</small></span></div>
+          <div class="kpi"><span class="k">Mô-đun hoàn thành</span><span class="v num">${P.nDone}<small>/${P.mods.length}</small></span></div>
           <div class="kpi"><span class="k">Điểm TB môn</span><span class="v num">${n1(gb.dtb)}</span><span class="d">${gb.level ? `<span class="pill ${levelCls(gb.level)}">${gb.level}</span>` : 'chưa có điểm'}</span></div></div>
         <div class="card"><div class="card-h"><div><h2>Mức nắm vững theo mục tiêu</h2><p>Tính từ câu luyện tập, lần gần đây được tính nặng hơn</p></div></div>
           ${objs.length ? hbars(objs.map(([o, v]) => ({ html: objChip(o) + ` <span class="muted" style="font-size:12px">${v.n} lượt</span>`, title: OBJ[o], value: v.score }))) : '<p class="muted">Làm câu luyện tập trong mô-đun để thấy mức nắm vững.</p>'}</div>

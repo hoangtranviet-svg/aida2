@@ -1,7 +1,7 @@
 // Trang giới thiệu
 import { $ } from '../core/util.js';
 import { ic, LOGO } from '../core/icons.js';
-import { MODULES } from '../core/qbank.js';
+import { MODULES, allQ } from '../core/qbank.js';
 import { mountGlobe } from '../core/globe.js';
 import * as D from '../core/data.js';
 
@@ -18,9 +18,9 @@ export default {
       <div>
         <span class="eyebrow">Địa lí 10 · Chương trình GDPT 2018 · Kết nối tri thức</span>
         <h1 style="margin-top:14px">Nhìn thấy <span class="o">Trái Đất</span> chuyển động. <span class="s">Hiểu vì sao</span> mình sai.</h1>
-        <p class="big">AIDA 2.0 là lớp học số cho môn Địa lí: học sinh khám phá 16 mô hình 3D theo mô-đun thầy cô mở, luyện tập theo từng mã mục tiêu, và nhận gợi ý cách học từ chính thói quen, lỗi sai của mình.</p>
+        <p class="big">AIDA 2.0 là lớp học số cho môn Địa lí: học sinh khám phá ${MODULES.length} mô hình 3D theo mô-đun thầy cô mở, luyện tập theo từng mã mục tiêu, và nhận gợi ý cách học từ chính thói quen, lỗi sai của mình.</p>
         <div class="ctas"><a class="btn sun lg" href="#${u ? '' : 'dang-nhap'}">${ic('play')} Dùng thử ngay</a><a class="btn lg" href="#dang-ki">${ic('users')} Tạo lớp cho giáo viên</a></div>
-        <div class="proof"><div><b class="num">16</b><span>mô-đun 3D có chuyển động</span></div><div><b class="num">318</b><span>mục tiêu được mã hoá</span></div><div><b class="num">126</b><span>câu hỏi theo CV 7991</span></div></div>
+        <div class="proof"><div><b class="num">${MODULES.length}</b><span>mô-đun 3D có chuyển động</span></div><div><b class="num">318</b><span>mục tiêu được mã hoá</span></div><div><b class="num">${allQ(null).length}</b><span>câu hỏi theo CV 7991</span></div></div>
       </div>
       <div class="globe-box" id="globe">
         <div class="globe-tag" style="left:16px;top:16px"><b>DL10.04.03</b>Các đai khí áp và gió</div>
@@ -34,7 +34,7 @@ export default {
       <p class="sub">Mỗi thao tác của học sinh trên mô hình, mỗi câu trả lời đều gắn với một mã mục tiêu. Nhờ vậy giáo viên biết chính xác lớp đang hổng ở đâu, học sinh biết mình cần làm gì tiếp theo.</p>
       <div class="feat">
         <div class="card flat"><span class="ic">${ic('unlock')}</span><h3>Mở mô-đun theo lịch học</h3><p>Giáo viên mở, khoá hoặc chuyển sang ôn tập từng bài; học sinh thấy ngay trên máy của mình.</p></div>
-        <div class="card flat"><span class="ic">${ic('cube')}</span><h3>16 mô hình 3D có chuyển động</h3><p>Hoàn lưu khí quyển, kiến tạo mảng, mùa và múi giờ, tháp dân số… lược đồ quốc tế đã Việt hoá.</p></div>
+        <div class="card flat"><span class="ic">${ic('cube')}</span><h3>${MODULES.length} mô hình 3D có chuyển động</h3><p>Hoàn lưu khí quyển, kiến tạo mảng, mùa và múi giờ, tháp dân số… lược đồ quốc tế đã Việt hoá.</p></div>
         <div class="card flat"><span class="ic">${ic('wand')}</span><h3>Tạo đề theo CV 7991</h3><p>Chọn phạm vi bài, hệ thống lập ma trận Biết – Hiểu – Vận dụng, sinh đề 3 phần và trộn nhiều mã đề, xuất Word.</p></div>
         <div class="card flat"><span class="ic">${ic('grade')}</span><h3>Chấm và phân tích bài kiểm tra</h3><p>Chấm tự động trắc nghiệm, đúng/sai, trả lời ngắn; gợi ý điểm tự luận; độ khó, độ phân biệt từng câu.</p></div>
         <div class="card flat"><span class="ic">${ic('pulse')}</span><h3>Phân tích thói quen học</h3><p>Phát hiện học dồn, học khuya, đoán mò, lặp lỗi – kèm bằng chứng và chiến lược học có cơ sở khoa học.</p></div>
@@ -56,7 +56,7 @@ export default {
 
     <section class="band" id="hoc-lieu">
       <span class="eyebrow">Học liệu 3D · Phần 1 – 3 sách Địa lí 10</span>
-      <h2 style="margin-top:8px">16 mô-đun, xếp theo chương</h2>
+      <h2 style="margin-top:8px">${MODULES.length} mô-đun, xếp theo chương</h2>
       <div class="mods" style="margin-top:20px">${MODULES.map(m => `<div class="mod"><span class="mod-n">${m.bai.toUpperCase()} · ${m.code}</span><div class="mod-t">${m.title}</div><span class="muted" style="font-size:12.5px">${m.chap}</span></div>`).join('')}</div>
     </section>
     <footer class="foot">AIDA 2.0 · Trần Việt Hoàng · Dự án dự thi Giải thưởng Tiên phong ứng dụng AI trong giáo dục 2026</footer></div>`;
