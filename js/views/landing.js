@@ -34,7 +34,7 @@ export default {
       <p class="sub">Mỗi thao tác của học sinh trên mô hình, mỗi câu trả lời đều gắn với một mã mục tiêu. Nhờ vậy giáo viên biết chính xác lớp đang hổng ở đâu, học sinh biết mình cần làm gì tiếp theo.</p>
       <div class="feat">
         <div class="card flat"><span class="ic">${ic('unlock')}</span><h3>Mở mô-đun theo lịch học</h3><p>Giáo viên mở, khoá hoặc chuyển sang ôn tập từng bài; học sinh thấy ngay trên máy của mình.</p></div>
-        <div class="card flat"><span class="ic">${ic('cube')}</span><h3>${MODULES.length} mô hình 3D có chuyển động</h3><p>Hoàn lưu khí quyển, kiến tạo mảng, mùa và múi giờ, tháp dân số… lược đồ quốc tế đã Việt hoá.</p></div>
+        <div class="card flat"><span class="ic">${ic('cube')}</span><h3>${MODULES.length} mô hình 3D có chuyển động</h3><p>Trọn 40 bài SGK Địa lí 10: hoàn lưu khí quyển, kiến tạo mảng, tháp dân số, chọn vị trí nhà máy, cáp quang biển, cán cân thương mại…</p></div>
         <div class="card flat"><span class="ic">${ic('wand')}</span><h3>Tạo đề theo CV 7991</h3><p>Chọn phạm vi bài, hệ thống lập ma trận Biết – Hiểu – Vận dụng, sinh đề 3 phần và trộn nhiều mã đề, xuất Word.</p></div>
         <div class="card flat"><span class="ic">${ic('grade')}</span><h3>Chấm và phân tích bài kiểm tra</h3><p>Chấm tự động trắc nghiệm, đúng/sai, trả lời ngắn; gợi ý điểm tự luận; độ khó, độ phân biệt từng câu.</p></div>
         <div class="card flat"><span class="ic">${ic('pulse')}</span><h3>Phân tích thói quen học</h3><p>Phát hiện học dồn, học khuya, đoán mò, lặp lỗi – kèm bằng chứng và chiến lược học có cơ sở khoa học.</p></div>

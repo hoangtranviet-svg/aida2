@@ -54,7 +54,10 @@ export async function runLab(def) {
   function resize() {
     const w = stage.clientWidth, h = stage.clientHeight;
     renderer.setSize(w, h); state2d.w = w; state2d.h = h;
-    camera.aspect = w / Math.max(h, 1); camera.updateProjectionMatrix();
+    camera.aspect = w / Math.max(h, 1);
+    // màn hình dọc (điện thoại): mở rộng góc nhìn để cảnh không bị cắt hai bên
+    camera.fov = camera.aspect < 1 ? Math.min(80, 2 * Math.atan(Math.tan(22.5 * DEG) / Math.pow(camera.aspect, .75)) / DEG) : 45;
+    camera.updateProjectionMatrix();
   }
   new ResizeObserver(resize).observe(stage); resize();
 

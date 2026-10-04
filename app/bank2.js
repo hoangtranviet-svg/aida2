@@ -21,7 +21,7 @@ const MANUAL = {
   'DL10.04.04-Q03': 'H', 'DL10.04.07-Q02': 'V', 'DL10.04.06-Q01': 'V', 'DL10.04.07-Q03': 'H', 'DL10.05.02-Q01': 'V', 'DL10.05.05-Q01': 'H', 'DL10.05.01-Q02': 'H',
   'DL10.05.08-Q03': 'H', 'DL10.05.09-Q01': 'V', 'DL10.05.09-Q02': 'H', 'DL10.06.03-Q02': 'H', 'DL10.07.03-Q03': 'V', 'DL10.07.04-Q01': 'V', 'DL10.08.05-Q02': 'H', 'DL10.08.09-Q01': 'H',
 };
-export const LEVEL = Object.fromEntries(BANK.map(q => [q.id, MANUAL[q.id] || guessLevel(q)]));
+export const LEVEL = Object.fromEntries(BANK.map(q => [q.id, MANUAL[q.id] || q.lv || guessLevel(q)]));
 
 const DS = (m, o, lv, q, st, k, e, x, s = null) => ({ t: 'ds', m, o, lv, q, st, k, e, x, s });
 const TL = (m, o, lv, q, k, tol, unit, x, s = null) => ({ t: 'tln', m, o, lv, q, k, tol, unit, x, s });
@@ -206,6 +206,136 @@ export const EXTRA = [
   TU('DL10.B17', 'DL10.07.02', 'V', 'Lấy ví dụ chứng minh quy luật thống nhất và hoàn chỉnh của vỏ địa lí và nêu ý nghĩa thực tiễn của quy luật.',
     [['Nêu đúng biểu hiện: một thành phần thay đổi kéo theo các thành phần khác thay đổi.', 0.25, ['thanh phan', 'thay doi', 'keo theo']], ['Ví dụ hợp lí, có chuỗi tác động (vd: phá rừng → đất xói mòn → lũ, cạn kiệt → khí hậu thay đổi).', 0.5, ['pha rung', 'xoi mon', 'lu', 'khi hau']], ['Ý nghĩa: cần nghiên cứu kĩ, toàn diện các thành phần trước khi khai thác, sử dụng tự nhiên.', 0.25, ['nghien cuu', 'toan dien', 'khai thac']]],
     'Một thành phần thay đổi kéo theo các thành phần khác; ví dụ phá rừng đầu nguồn; cần nghiên cứu toàn diện trước khi khai thác.'),
+
+  // ===== Bài 1
+  DS('DL10.B01', 'DL10.00.02', 'H', 'Đọc các nhận định về môn Địa lí và định hướng nghề nghiệp.',
+    ['Môn Địa lí có tính tổng hợp, kết nối kiến thức tự nhiên và kinh tế – xã hội.', 'Kiến thức địa lí chỉ cần thiết cho nghề giáo viên địa lí.', 'Hệ thông tin địa lí (GIS) được dùng trong quy hoạch, quản lí đô thị.', 'Học Địa lí không giúp ích cho việc phòng tránh thiên tai.'],
+    [true, false, true, false], ['E56', 'E56', 'E56', 'E56'], 'Kiến thức địa lí cần cho nhiều nghề (khí tượng, quy hoạch, du lịch, môi trường, GIS…) và giúp ứng phó thiên tai.', 4),
+  TU('DL10.B01', 'DL10.00.03', 'V', 'Kể tên ba nghề nghiệp có sử dụng kiến thức địa lí và cho biết kiến thức địa lí giúp ích gì cho mỗi nghề.',
+    [['Nêu đúng ba nghề có liên quan (khí tượng thuỷ văn, quy hoạch, du lịch, GIS – viễn thám, môi trường, địa chất…).', 0.5, ['khi tuong', 'quy hoach', 'du lich', 'gis', 'vien tham', 'moi truong', 'dia chat', 'giao vien']], ['Giải thích được kiến thức địa lí giúp ích cho từng nghề (đọc bản đồ, dự báo, phân bố trên lãnh thổ, tài nguyên…).', 0.5, ['ban do', 'du bao', 'phan bo', 'lanh tho', 'tai nguyen', 'thoi tiet']]],
+    'Ví dụ: dự báo khí tượng (hiểu khí quyển), quy hoạch đô thị (bố trí lãnh thổ), hướng dẫn viên du lịch (hiểu tài nguyên du lịch các vùng).', 4),
+  // ===== Bài 21
+  DS('DL10.B21', 'DL10.09.01', 'H', 'Một tỉnh ven biển có cảng nước sâu, mỏ đá vôi, dân số đông và thu hút nhiều vốn đầu tư nước ngoài (FDI).',
+    ['Cảng nước sâu ven biển là lợi thế về vị trí địa lí.', 'Mỏ đá vôi thuộc nguồn lực kinh tế – xã hội.', 'Vốn FDI là nguồn lực ngoài nước.', 'Dân số đông vừa là nguồn lao động vừa là thị trường tiêu thụ.'],
+    [true, false, true, true], ['E35', 'E35', 'E35', 'E36'], 'Mỏ đá vôi là khoáng sản – nguồn lực tự nhiên.', 2),
+  TU('DL10.B21', 'DL10.09.01', 'H', 'Trình bày vai trò của các nguồn lực đối với sự phát triển kinh tế.',
+    [['Vị trí địa lí: tạo thuận lợi hoặc khó khăn cho giao lưu, trao đổi giữa các vùng, các nước.', 0.25, ['vi tri', 'thuan loi', 'giao luu', 'trao doi']], ['Nguồn lực tự nhiên: là cơ sở tự nhiên của quá trình sản xuất.', 0.25, ['tu nhien', 'co so']], ['Nguồn lực kinh tế – xã hội: có vai trò quyết định.', 0.25, ['kinh te', 'xa hoi', 'quyet dinh']], ['Nội lực có vai trò quyết định, ngoại lực quan trọng; cần kết hợp hai nguồn lực.', 0.25, ['noi luc', 'ngoai luc', 'ket hop', 'trong nuoc', 'ngoai nuoc']]],
+    'Vị trí – thuận lợi/khó khăn cho giao lưu; tự nhiên – cơ sở tự nhiên; kinh tế – xã hội – quyết định; kết hợp nội lực và ngoại lực.', 4),
+  // ===== Bài 22
+  DS('DL10.B22', 'DL10.09.03', 'H', 'Đọc thông tin về GDP và GNI.',
+    ['GDP tính giá trị sản xuất trong phạm vi lãnh thổ một nước.', 'GNI tính thu nhập do công dân một nước tạo ra, dù ở trong hay ngoài nước.', 'Nước có nhiều doanh nghiệp FDI chuyển lợi nhuận ra nước ngoài thường có GNI lớn hơn GDP.', 'GDP bình quân đầu người bằng GDP chia cho số dân.'],
+    [true, true, false, true], ['E37', 'E37', 'E37', 'E37'], 'Lợi nhuận chuyển ra nước ngoài làm GNI nhỏ hơn GDP.', 4),
+  TL('DL10.B22', 'DL10.09.06', 'V', 'Năm 2019, cơ cấu GDP Việt Nam (không tính thuế sản phẩm): nông – lâm – thuỷ sản 15,5%, công nghiệp – xây dựng 38,3%, còn lại là dịch vụ. Tỉ trọng dịch vụ là bao nhiêu %?', '46,2', 0.05, '%', '100 − 15,5 − 38,3 = 46,2%.', 2),
+  TL('DL10.B22', 'DL10.09.03', 'V', 'Một nước có GDP 400 tỉ USD, thu nhập từ nước ngoài chuyển về 15 tỉ USD, thu nhập chuyển ra nước ngoài 35 tỉ USD. GNI của nước đó là bao nhiêu tỉ USD?', '380', 0, 'tỉ USD', 'GNI = 400 + 15 − 35 = 380 tỉ USD.', 4),
+  // ===== Bài 23
+  DS('DL10.B23', 'DL10.10.01', 'H', 'Đọc các nhận định về đặc điểm sản xuất nông nghiệp, lâm nghiệp.',
+    ['Đất trồng là tư liệu sản xuất chủ yếu, không thể thay thế.', 'Sản xuất nông nghiệp ít phụ thuộc vào điều kiện tự nhiên.', 'Cây rừng có chu kì sinh trưởng dài.', 'Nông nghiệp hiện đại ngày càng gắn với khoa học – công nghệ và thị trường.'],
+    [true, false, true, true], ['E39', 'E39', 'E39', 'E39'], 'Nông nghiệp phụ thuộc nhiều vào đất, khí hậu, nguồn nước, sinh vật.', 2),
+  TU('DL10.B23', 'DL10.10.02', 'H', 'Phân tích ảnh hưởng của nhân tố khí hậu đến sản xuất nông nghiệp.',
+    [['Khí hậu (nhiệt, ẩm, ánh sáng) quyết định cơ cấu cây trồng, vật nuôi.', 0.25, ['nhiet', 'am', 'anh sang', 'co cau']], ['Ảnh hưởng đến thời vụ, khả năng xen canh, tăng vụ.', 0.25, ['thoi vu', 'xen canh', 'tang vu']], ['Ảnh hưởng đến năng suất, chất lượng sản phẩm.', 0.25, ['nang suat', 'chat luong']], ['Thiên tai (bão, lũ, hạn, rét) gây thiệt hại, làm sản xuất bấp bênh.', 0.25, ['thien tai', 'bao', 'lu', 'han', 'ret']]],
+    'Khí hậu quyết định cơ cấu cây trồng, thời vụ, khả năng tăng vụ, năng suất; thiên tai gây thiệt hại.', 4),
+  // ===== Bài 24
+  DS('DL10.B24', 'DL10.10.04', 'H', 'Quan sát bản đồ phân bố một số cây trồng, vật nuôi chính trên thế giới.',
+    ['Lúa gạo tập trung ở miền nhiệt đới, cận nhiệt gió mùa châu Á.', 'Lúa mì trồng chủ yếu ở vùng xích đạo nóng ẩm.', 'Bra-xin là nước sản xuất cà phê lớn nhất thế giới.', 'Cừu được nuôi nhiều ở vùng khí hậu khô, đồng cỏ cận nhiệt, ôn đới.'],
+    [true, false, true, true], ['E41', 'E41', 'E41', 'E41'], 'Lúa mì ưa khí hậu ấm, khô; trồng chủ yếu ở ôn đới và cận nhiệt.', 1),
+  TU('DL10.B24', 'DL10.10.03', 'H', 'Trình bày vai trò và đặc điểm của ngành chăn nuôi.',
+    [['Vai trò: cung cấp thực phẩm dinh dưỡng cao (thịt, trứng, sữa).', 0.25, ['thuc pham', 'thit', 'trung', 'sua']], ['Cung cấp nguyên liệu cho công nghiệp, hàng xuất khẩu, sức kéo, phân bón.', 0.25, ['nguyen lieu', 'xuat khau', 'suc keo', 'phan bon']], ['Đặc điểm: phụ thuộc chặt chẽ vào cơ sở nguồn thức ăn.', 0.25, ['thuc an', 'phu thuoc']], ['Chuyển từ chăn thả sang chăn nuôi công nghiệp, chuồng trại.', 0.25, ['chan tha', 'cong nghiep', 'chuong trai']]],
+    'Vai trò: thực phẩm, nguyên liệu, xuất khẩu… Đặc điểm: phụ thuộc nguồn thức ăn; xu hướng chăn nuôi công nghiệp.', 4),
+  // ===== Bài 25
+  DS('DL10.B25', 'DL10.10.08', 'V', 'Năm 2022, thế giới khai thác 91,0 triệu tấn và nuôi trồng 94,4 triệu tấn động vật thuỷ sản (FAO).',
+    ['Sản lượng nuôi trồng lớn hơn khai thác.', 'Tổng sản lượng động vật thuỷ sản năm 2022 là 185,4 triệu tấn.', 'Tỉ trọng nuôi trồng chiếm dưới 40% tổng sản lượng.', 'Nuôi trồng giúp giảm áp lực khai thác nguồn lợi tự nhiên.'],
+    [true, true, false, true], ['E42', 'E27', 'E27', 'E42'], '94,4 ÷ 185,4 × 100 ≈ 50,9% – nuôi trồng chiếm hơn một nửa.', 4),
+  TL('DL10.B25', 'DL10.10.08', 'V', 'Năm 2022, thế giới khai thác 91,0 triệu tấn và nuôi trồng 94,4 triệu tấn động vật thuỷ sản. Tỉ trọng nuôi trồng chiếm bao nhiêu %? (làm tròn đến một chữ số thập phân)', '50,9', 0.1, '%', '94,4 ÷ (91,0 + 94,4) × 100 ≈ 50,9%.', 4),
+  // ===== Bài 26
+  DS('DL10.B26', 'DL10.10.05', 'H', 'Đọc các nhận định về hình thức tổ chức lãnh thổ nông nghiệp.',
+    ['Trang trại có mục đích chủ yếu là sản xuất hàng hoá.', 'Vùng nông nghiệp là hình thức tổ chức lãnh thổ nông nghiệp thấp nhất.', 'Thể tổng hợp nông nghiệp gắn vùng nguyên liệu với cơ sở chế biến.', 'Tổ chức lãnh thổ nông nghiệp hợp lí giúp sử dụng hiệu quả tài nguyên.'],
+    [true, false, true, true], ['E43', 'E43', 'E43', 'E43'], 'Vùng nông nghiệp là hình thức cao nhất.', 2),
+  TU('DL10.B26', 'DL10.10.02', 'V', 'Nêu ba định hướng phát triển nông nghiệp trong tương lai và lấy một ví dụ ở Việt Nam.',
+    [['Nông nghiệp công nghệ cao, thông minh (tự động hoá, cảm biến, máy bay không người lái…).', 0.25, ['cong nghe cao', 'thong minh', 'tu dong']], ['Nông nghiệp xanh, hữu cơ, tuần hoàn.', 0.25, ['xanh', 'huu co', 'tuan hoan']], ['Nông nghiệp thích ứng với biến đổi khí hậu, liên kết theo chuỗi giá trị.', 0.25, ['bien doi khi hau', 'thich ung', 'chuoi gia tri', 'lien ket']], ['Ví dụ phù hợp ở Việt Nam (rau nhà kính Đà Lạt, lúa – tôm Đồng bằng sông Cửu Long, cánh đồng lớn…).', 0.25, ['da lat', 'nha kinh', 'lua tom', 'canh dong lon', 'vietgap']]],
+    'Công nghệ cao; xanh, hữu cơ; thích ứng biến đổi khí hậu, liên kết chuỗi; ví dụ: rau hoa công nghệ cao ở Đà Lạt.', 5),
+  // ===== Bài 27
+  DS('DL10.B27', 'DL10.10.08', 'V', 'Sản lượng lương thực thế giới năm 2000 là 2 058,7 triệu tấn, năm 2019 là 3 075,9 triệu tấn; tỉ trọng ngô tăng từ 28,7% lên 37,3%.',
+    ['Tổng sản lượng lương thực năm 2019 gấp khoảng 1,5 lần năm 2000.', 'Biểu đồ tròn có bán kính bằng nhau thể hiện tốt nhất quy mô và cơ cấu hai năm.', 'Năm 2019 ngô có tỉ trọng lớn nhất trong cơ cấu sản lượng lương thực.', 'Tỉ trọng lúa gạo tăng trong giai đoạn 2000 – 2019.'],
+    [true, false, true, false], ['E27', 'E44', 'E27', 'E27'], 'Cần bán kính khác nhau để thể hiện quy mô; tỉ trọng lúa gạo giảm (29,1% → 24,5%).', 3),
+  TL('DL10.B27', 'DL10.10.08', 'V', 'Năm 2000, sản lượng lúa gạo thế giới là 598,7 triệu tấn, tổng sản lượng lương thực là 2 058,7 triệu tấn. Tỉ trọng lúa gạo là bao nhiêu %? (làm tròn đến một chữ số thập phân)', '29,1', 0.05, '%', '598,7 ÷ 2 058,7 × 100 ≈ 29,1%.', 2),
+  // ===== Bài 28
+  DS('DL10.B28', 'DL10.11.02', 'V', 'Một tỉnh có mỏ đá vôi lớn ở vùng núi, đồng bằng trồng lúa, thành phố đông dân và cảng nước sâu.',
+    ['Nhà máy xi măng nên đặt gần mỏ đá vôi.', 'Nhà máy dệt may nên đặt ở vùng núi xa dân cư.', 'Nhà máy lọc hoá dầu nên đặt gần cảng nước sâu, xa khu dân cư.', 'Nhà máy chế biến nông sản nên đặt gần vùng nguyên liệu.'],
+    [true, false, true, true], ['E45', 'E45', 'E45', 'E45'], 'Dệt may cần nhiều lao động, gần thị trường → đặt ở nơi đông dân.', 4),
+  TU('DL10.B28', 'DL10.11.02', 'H', 'Phân tích ảnh hưởng của nhân tố kinh tế – xã hội đến sự phát triển và phân bố công nghiệp.',
+    [['Dân cư, lao động: cung cấp lao động, thị trường tiêu thụ; ngành cần nhiều lao động phân bố ở nơi đông dân.', 0.25, ['dan cu', 'lao dong', 'thi truong']], ['Thị trường: điều tiết quy mô, cơ cấu, hướng chuyên môn hoá sản xuất.', 0.25, ['thi truong', 'chuyen mon hoa', 'quy mo']], ['Vốn, khoa học – công nghệ: mở rộng sản xuất, đổi mới công nghệ, thay đổi phân bố.', 0.25, ['von', 'khoa hoc', 'cong nghe']], ['Chính sách, cơ sở hạ tầng: định hướng phát triển, thu hút đầu tư.', 0.25, ['chinh sach', 'co so ha tang', 'dau tu']]],
+    'Dân cư – lao động; thị trường; vốn, khoa học – công nghệ; chính sách, cơ sở hạ tầng – có vai trò quyết định.', 4),
+  // ===== Bài 29
+  DS('DL10.B29', 'DL10.11.04', 'H', 'Đọc thông tin về một số ngành công nghiệp năm 2023.',
+    ['Than vẫn là nguồn sản xuất điện lớn nhất thế giới.', 'Trung Quốc khai thác hơn một nửa sản lượng than thế giới.', 'Ngành điện tử – tin học cần nhiều diện tích và gây ô nhiễm nặng.', 'Dệt may phát triển mạnh ở các nước đông dân, lao động dồi dào.'],
+    [true, true, false, true], ['E46', 'E46', 'E46', 'E46'], 'Điện tử – tin học ít gây ô nhiễm, không cần nhiều diện tích, cần lao động có trình độ.', 3),
+  TL('DL10.B29', 'DL10.11.08', 'V', 'Năm 2023, sản lượng điện thế giới là 29 471 TWh, trong đó điện than 10 434 TWh. Tỉ trọng điện than là bao nhiêu %? (làm tròn đến một chữ số thập phân)', '35,4', 0.1, '%', '10 434 ÷ 29 471 × 100 ≈ 35,4%.', 3),
+  // ===== Bài 30
+  DS('DL10.B30', 'DL10.11.06', 'H', 'So sánh các hình thức tổ chức lãnh thổ công nghiệp.',
+    ['Điểm công nghiệp đồng nhất với một điểm dân cư.', 'Khu công nghiệp có dân cư sinh sống bên trong.', 'Trung tâm công nghiệp có các xí nghiệp nòng cốt (hạt nhân).', 'Các xí nghiệp trong khu công nghiệp sử dụng chung cơ sở hạ tầng.'],
+    [true, false, true, true], ['E47', 'E47', 'E47', 'E47'], 'Khu công nghiệp không có dân cư sinh sống.', 3),
+  TU('DL10.B30', 'DL10.11.06', 'H', 'So sánh khu công nghiệp và trung tâm công nghiệp.',
+    [['Khu công nghiệp: ranh giới xác định, không có dân cư, tập trung nhiều xí nghiệp dùng chung hạ tầng.', 0.5, ['ranh gioi', 'khong co dan', 'ha tang', 'dung chung']], ['Trung tâm công nghiệp: gắn với đô thị vừa và lớn, gồm nhiều khu, điểm công nghiệp, có xí nghiệp nòng cốt, liên hệ chặt chẽ.', 0.5, ['do thi', 'nong cot', 'hat nhan', 'lien he']]],
+    'Khu công nghiệp: ranh giới rõ, không dân cư, hạ tầng chung. Trung tâm công nghiệp: gắn đô thị, quy mô lớn hơn, có xí nghiệp nòng cốt.', 4),
+  // ===== Bài 31
+  DS('DL10.B31', 'DL10.11.05', 'H', 'Đọc thông tin về tác động của công nghiệp tới môi trường.',
+    ['Khí SO₂, NOₓ từ nhà máy nhiệt điện có thể gây mưa axit.', 'Nước thải công nghiệp chưa xử lí làm ô nhiễm sông, hồ.', 'Năng lượng gió, mặt trời là năng lượng không tái tạo.', 'Phát triển năng lượng tái tạo góp phần giảm phát thải khí nhà kính.'],
+    [true, true, false, true], ['E48', 'E48', 'E48', 'E48'], 'Gió, mặt trời là năng lượng tái tạo, vô tận.', 1),
+  TU('DL10.B31', 'DL10.11.05', 'V', 'Vì sao cần phát triển mạnh các nguồn năng lượng tái tạo? Kể tên ba nguồn năng lượng tái tạo ở Việt Nam.',
+    [['Nhiên liệu hoá thạch có hạn, đang cạn dần.', 0.25, ['co han', 'can kiet', 'hoa thach']], ['Đốt nhiên liệu hoá thạch gây ô nhiễm, phát thải khí nhà kính, biến đổi khí hậu.', 0.25, ['o nhiem', 'khi nha kinh', 'bien doi khi hau', 'phat thai']], ['Năng lượng tái tạo sạch, vô tận, bảo đảm an ninh năng lượng.', 0.25, ['sach', 'vo tan', 'an ninh nang luong']], ['Kể đúng ba nguồn: mặt trời, gió, thuỷ điện, sinh khối…', 0.25, ['mat troi', 'gio', 'thuy dien', 'sinh khoi', 'thuy trieu']]],
+    'Hoá thạch cạn kiệt, gây ô nhiễm và biến đổi khí hậu; tái tạo sạch, vô tận; Việt Nam: điện mặt trời, gió, thuỷ điện, sinh khối.', 3),
+  // ===== Bài 32
+  DS('DL10.B32', 'DL10.11.07', 'H', 'Một nhóm học sinh chuẩn bị viết báo cáo về ngành điện gió ở Việt Nam.',
+    ['Bước đầu tiên là chọn đề tài và xác định phạm vi.', 'Có thể dùng số liệu trên mạng xã hội không rõ nguồn.', 'Đề cương gồm mở đầu, nội dung, kết luận, tài liệu tham khảo.', 'Nên kết hợp bản đồ, biểu đồ khi trình bày báo cáo.'],
+    [true, false, true, true], ['E57', 'E57', 'E57', 'E57'], 'Số liệu phải lấy từ nguồn tin cậy và ghi rõ nguồn.', 2),
+  // ===== Bài 33
+  DS('DL10.B33', 'DL10.12.01', 'H', 'Phân loại các hoạt động dịch vụ trong một thành phố.',
+    ['Ngân hàng, bảo hiểm thuộc dịch vụ kinh doanh.', 'Siêu thị, khách sạn thuộc dịch vụ tiêu dùng.', 'Hoạt động hành chính công thuộc dịch vụ kinh doanh.', 'Sản phẩm dịch vụ phần lớn là vô hình.'],
+    [true, true, false, true], ['E49', 'E49', 'E49', 'E49'], 'Hành chính công thuộc dịch vụ công.', 1),
+  TU('DL10.B33', 'DL10.12.05', 'V', 'Kể tên các hoạt động dịch vụ ở địa phương em và xếp chúng vào ba nhóm: dịch vụ kinh doanh, dịch vụ tiêu dùng, dịch vụ công.',
+    [['Kể đúng ví dụ dịch vụ kinh doanh (ngân hàng, vận tải, bưu chính, viễn thông…).', 0.35, ['ngan hang', 'van tai', 'buu chinh', 'vien thong', 'bao hiem']], ['Kể đúng ví dụ dịch vụ tiêu dùng (chợ, siêu thị, nhà hàng, du lịch, y tế, giáo dục…).', 0.35, ['cho', 'sieu thi', 'nha hang', 'du lich', 'y te', 'giao duc']], ['Kể đúng ví dụ dịch vụ công (hành chính công, ủy ban, cấp giấy tờ…).', 0.3, ['hanh chinh', 'uy ban', 'giay to', 'cong']]],
+    'Ví dụ: ngân hàng, bến xe (kinh doanh); chợ, siêu thị, trường học (tiêu dùng); bộ phận một cửa của phường (công).', 1),
+  // ===== Bài 34
+  DS('DL10.B34', 'DL10.12.02', 'H', 'So sánh các loại hình giao thông vận tải.',
+    ['Đường biển đảm nhận phần lớn hàng hoá buôn bán quốc tế.', 'Hàng không có cước phí rẻ nhất.', 'Ô tô cơ động, linh hoạt, hiệu quả ở cự li ngắn và trung bình.', 'Đường ống thích hợp để vận chuyển dầu, khí.'],
+    [true, false, true, true], ['E50', 'E50', 'E50', 'E50'], 'Hàng không nhanh nhất nhưng cước phí đắt nhất.', 4),
+  TL('DL10.B34', 'DL10.12.04', 'V', 'Năm X, một nước vận chuyển 1 800 triệu tấn hàng hoá, khối lượng luân chuyển là 450 tỉ tấn.km. Cự li vận chuyển trung bình là bao nhiêu km?', '250', 0, 'km', '450 000 triệu tấn.km ÷ 1 800 triệu tấn = 250 km.', 5),
+  // ===== Bài 35
+  DS('DL10.B35', 'DL10.12.03', 'H', 'Đọc thông tin về ngành bưu chính viễn thông.',
+    ['Cáp quang biển truyền phần lớn lưu lượng Internet quốc tế.', 'Vệ tinh địa tĩnh có độ trễ tín hiệu thấp hơn cáp quang.', 'Năm 2023 khoảng 67% dân số thế giới dùng Internet.', 'Thương mại điện tử thúc đẩy dịch vụ chuyển phát phát triển.'],
+    [true, false, true, true], ['E51', 'E51', 'E51', 'E51'], 'Tín hiệu qua vệ tinh địa tĩnh phải đi khoảng 72 000 km nên độ trễ lớn hơn.', 3),
+  TL('DL10.B35', 'DL10.12.03', 'V', 'Năm 2023 thế giới có khoảng 8,0 tỉ người, trong đó 5,4 tỉ người dùng Internet. Tỉ lệ người dùng Internet là bao nhiêu %? (làm tròn đến hàng đơn vị)', '68', 1, '%', '5,4 ÷ 8,0 × 100 ≈ 67,5% ≈ 68% (ITU công bố 67%).', 4),
+  // ===== Bài 36
+  DS('DL10.B36', 'DL10.12.03', 'H', 'Đọc thông tin về du lịch thế giới và Việt Nam.',
+    ['Năm 2024 châu Âu đón nhiều khách quốc tế nhất.', 'Du lịch không có tính mùa vụ.', 'Năm 2020 lượng khách quốc tế giảm mạnh do đại dịch COVID-19.', 'Năm 2024 khách quốc tế đến Việt Nam đạt khoảng 17,6 triệu lượt.'],
+    [true, false, true, true], ['E52', 'E52', 'E52', 'E52'], 'Du lịch có tính mùa vụ rõ rệt.', 3),
+  TU('DL10.B36', 'DL10.12.03', 'H', 'Phân tích các nhân tố ảnh hưởng đến sự phát triển và phân bố du lịch.',
+    [['Tài nguyên du lịch tự nhiên và văn hoá quyết định sức hút, loại hình du lịch.', 0.5, ['tai nguyen', 'tu nhien', 'van hoa']], ['Kinh tế – xã hội: mức sống, thời gian rỗi, cơ sở hạ tầng, chính sách, an ninh, quảng bá.', 0.5, ['muc song', 'thoi gian roi', 'ha tang', 'chinh sach', 'an ninh', 'quang ba']]],
+    'Tài nguyên du lịch; mức sống, thời gian rỗi; cơ sở hạ tầng, lưu trú; chính sách thị thực; an ninh.', 2),
+  // ===== Bài 37
+  DS('DL10.B37', 'DL10.12.04', 'V', 'Năm 2024, Việt Nam xuất khẩu 405,53 tỉ USD, nhập khẩu 380,76 tỉ USD.',
+    ['Tổng kim ngạch xuất nhập khẩu là 786,29 tỉ USD.', 'Việt Nam nhập siêu năm 2024.', 'Cán cân thương mại là +24,77 tỉ USD.', 'Thị trường xuất khẩu lớn nhất của Việt Nam là Hoa Kỳ.'],
+    [true, false, true, true], ['E27', 'E53', 'E27', 'E53'], 'Xuất khẩu lớn hơn nhập khẩu → xuất siêu.', 2),
+  TL('DL10.B37', 'DL10.12.04', 'V', 'Năm 2023, Việt Nam xuất khẩu 355,5 tỉ USD, nhập khẩu 327,5 tỉ USD. Cán cân thương mại là bao nhiêu tỉ USD?', '28', 0, 'tỉ USD', '355,5 − 327,5 = 28 tỉ USD (xuất siêu).', 2),
+  // ===== Bài 38
+  DS('DL10.B38', 'DL10.12.06', 'H', 'Một học sinh viết báo cáo về du lịch quốc tế ở Việt Nam giai đoạn 2019 – 2024.',
+    ['Biểu đồ cột phù hợp để thể hiện số khách qua các năm.', 'Năm 2021 số khách quốc tế đạt cao nhất.', 'Cần ghi nguồn số liệu (Tổng cục Thống kê…).', 'Phần kết luận nên có đề xuất phát triển du lịch.'],
+    [true, false, true, true], ['E44', 'E27', 'E57', 'E57'], 'Năm 2021 thấp nhất do đóng cửa biên giới.', 3),
+  TL('DL10.B38', 'DL10.12.04', 'V', 'Khách quốc tế đến Việt Nam năm 2019 là 18,0 triệu lượt, năm 2024 là 17,6 triệu lượt. Năm 2024 bằng bao nhiêu % năm 2019? (làm tròn đến một chữ số thập phân)', '97,8', 0.3, '%', '17,6 ÷ 18,0 × 100 ≈ 97,8% (số liệu chính xác: 97,6%).', 4),
+  // ===== Bài 39
+  DS('DL10.B39', 'DL10.13.01', 'H', 'Phân loại tài nguyên thiên nhiên theo khả năng bị hao kiệt.',
+    ['Than đá là tài nguyên không khôi phục được.', 'Năng lượng Mặt Trời là tài nguyên bị hao kiệt.', 'Rừng là tài nguyên có thể khôi phục nếu khai thác hợp lí.', 'Đất trồng có thể phục hồi độ phì nếu canh tác hợp lí.'],
+    [true, false, true, true], ['E54', 'E54', 'E54', 'E54'], 'Năng lượng Mặt Trời không bị hao kiệt.', 3),
+  TU('DL10.B39', 'DL10.13.02', 'H', 'Trình bày vai trò của môi trường đối với sự phát triển xã hội loài người.',
+    [['Là không gian sống của con người.', 0.25, ['khong gian song']], ['Là nơi cung cấp tài nguyên thiên nhiên.', 0.25, ['cung cap', 'tai nguyen']], ['Là nơi chứa đựng, phân huỷ chất thải.', 0.25, ['chat thai', 'phan huy', 'chua dung']], ['Môi trường có vai trò rất quan trọng nhưng không có vai trò quyết định sự phát triển xã hội.', 0.25, ['khong quyet dinh', 'khong co vai tro quyet dinh']]],
+    'Không gian sống; cung cấp tài nguyên; chứa đựng, phân huỷ chất thải; quan trọng nhưng không quyết định.', 2),
+  // ===== Bài 40
+  DS('DL10.B40', 'DL10.13.04', 'H', 'Đọc các nhận định về phát triển bền vững và tăng trưởng xanh.',
+    ['Phát triển bền vững kết hợp hài hoà kinh tế, xã hội và môi trường.', 'Tăng trưởng xanh khuyến khích tăng khai thác than để phát điện.', 'Đi xe buýt điện, phân loại rác là biểu hiện của lối sống xanh.', 'Liên Hợp Quốc đề ra 17 Mục tiêu phát triển bền vững.'],
+    [true, false, true, true], ['E55', 'E55', 'E55', 'E55'], 'Tăng trưởng xanh hướng tới giảm phát thải, dùng năng lượng tái tạo.', 3),
+  TU('DL10.B40', 'DL10.13.05', 'V', 'Nêu ba việc làm cụ thể thể hiện tăng trưởng xanh mà địa phương hoặc gia đình em có thể thực hiện.',
+    [['Sử dụng năng lượng tiết kiệm, năng lượng tái tạo (điện mặt trời mái nhà, đèn LED…).', 0.35, ['tiet kiem', 'mat troi', 'tai tao', 'den led']], ['Phân loại rác tại nguồn, tái chế, hạn chế đồ nhựa dùng một lần.', 0.35, ['phan loai', 'tai che', 'nhua']], ['Đi xe đạp, phương tiện công cộng; trồng cây xanh; tiêu dùng sản phẩm thân thiện môi trường.', 0.3, ['xe dap', 'cong cong', 'trong cay', 'than thien']]],
+    'Điện mặt trời mái nhà, tiết kiệm điện; phân loại rác, tái chế; đi xe đạp, xe buýt, trồng cây xanh.', 3),
 ];
 // mã câu: <mục tiêu>-DS01 / -TL01 / -TU01
 const PRE = { ds: 'DS', tln: 'TL', tlu: 'TU' };

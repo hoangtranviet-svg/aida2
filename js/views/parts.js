@@ -12,7 +12,7 @@ export const lvChip = lv => `<span class="lv ${lv}" data-tip="${LEVEL_NAME[lv] |
 export const objChip = o => `<span class="obj" data-tip="${esc(OBJ[o] || '')}">${o}</span>`;
 export const stateName = { locked: 'Đang khoá', open: 'Đang mở', review: 'Ôn tập' };
 export const statePill = s => `<span class="pill ${s === 'open' ? 'p-open' : s === 'review' ? 'p-review' : 'p-lock'}">${stateName[s] || 'Đang khoá'}</span>`;
-const MOD_IC = { '02': 'map', '03': 'pin', '04': 'globe', '05': 'sun', '06': 'layers', '07': 'layers', '08': 'flame', '09': 'globe', '10': 'globe', '11': 'route', '12': 'route', '13': 'chart', '14': 'layers', '15': 'spark', '16': 'globe', '17': 'layers', '18': 'map', '19': 'users', '20': 'users' };
+const MOD_IC = { '02': 'map', '03': 'pin', '04': 'globe', '05': 'sun', '06': 'layers', '07': 'layers', '08': 'flame', '09': 'globe', '10': 'globe', '11': 'route', '12': 'route', '13': 'chart', '14': 'layers', '15': 'spark', '16': 'globe', '17': 'layers', '18': 'map', '19': 'users', '20': 'users', '01': 'book', '21': 'key', '22': 'chart', '23': 'sun', '24': 'map', '25': 'layers', '26': 'map', '27': 'chart', '28': 'cube', '29': 'flame', '30': 'cube', '31': 'spark', '32': 'file', '33': 'users', '34': 'route', '35': 'megaphone', '36': 'pin', '37': 'bank', '38': 'file', '39': 'globe', '40': 'shield' };
 export const modIcon = code => ic(MOD_IC[MOD[code]?.lab] || 'cube');
 
 // ---------- hiển thị một câu hỏi ----------
