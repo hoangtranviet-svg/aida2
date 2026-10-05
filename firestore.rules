@@ -1,6 +1,4 @@
 rules_version = '2';
-// Quy tắc bảo mật AIDA 2.0 – dán vào Firebase Console → Firestore Database → Rules → Publish
-// Nguyên tắc: tài khoản GV phải được quản trị viên duyệt mới tạo được lớp; GV chỉ quản lí lớp do mình tạo; HS chỉ đọc nội dung lớp mình và chỉ đọc/ghi dữ liệu của chính mình.
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
@@ -8,66 +6,49 @@ service cloud.firestore {
     function isTeacher(cid) { return signedIn() && classDoc(cid).teacher == request.auth.uid; }
     function isMember(cid) { return signedIn() && exists(/databases/$(database)/documents/classes/$(cid)/members/$(request.auth.uid)); }
     function inClass(cid) { return isTeacher(cid) || isMember(cid); }
-    // Quản trị viên duyệt tài khoản giáo viên (thêm email vào danh sách nếu cần)
     function isAdmin() { return signedIn() && request.auth.token.email in ['hoang.tranviet@wellspring.edu.vn']; }
     function myProfile() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
     function approvedTeacher() { return isAdmin() || (signedIn() && myProfile().role == 'gv' && myProfile().get('approved', false) == true); }
     function sameApproval() { return request.resource.data.get('approved', false) == resource.data.get('approved', false) && request.resource.data.get('rejected', false) == resource.data.get('rejected', false); }
+    function isSample() { return request.resource.data.get('sample', false) == true; }
 
     match /users/{uid} {
       allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
-      // HS tự đăng kí; GV tự đăng kí nhưng luôn ở trạng thái chưa duyệt
-      allow create: if signedIn() && request.auth.uid == uid && (request.resource.data.role == 'hs' && !('approved' in request.resource.data)
-                      || request.resource.data.role == 'gv' && (request.resource.data.get('approved', false) == false || isAdmin()));
-      // tự sửa hồ sơ nhưng không được đổi vai trò hay tự duyệt; quản trị viên duyệt/thu hồi
+      allow create: if signedIn() && request.auth.uid == uid && ((request.resource.data.role == 'hs' && !('approved' in request.resource.data)) || (request.resource.data.role == 'gv' && (request.resource.data.get('approved', false) == false || isAdmin())));
       allow update: if signedIn() && ((request.auth.uid == uid && request.resource.data.role == resource.data.role && sameApproval()) || isAdmin());
     }
-
-    // mã lớp → id lớp (ai cũng tra được một mã cụ thể, không liệt kê được)
     match /codes/{code} {
       allow get: if true;
       allow create: if signedIn() && getAfter(/databases/$(database)/documents/classes/$(request.resource.data.cid)).data.teacher == request.auth.uid;
       allow delete: if isTeacher(resource.data.cid);
     }
-
     match /classes/{cid} {
       allow read: if signedIn() && (resource.data.teacher == request.auth.uid || isMember(cid));
       allow create: if approvedTeacher() && request.resource.data.teacher == request.auth.uid;
       allow update: if isTeacher(cid) && request.resource.data.teacher == resource.data.teacher;
       allow delete: if isTeacher(cid);
-
       match /members/{mid} {
         allow read: if isTeacher(cid) || (signedIn() && request.auth.uid == mid);
         allow create: if isTeacher(cid) || (signedIn() && request.auth.uid == mid && request.resource.data.code == classDoc(cid).code);
         allow update: if isTeacher(cid);
         allow delete: if isTeacher(cid) || (signedIn() && request.auth.uid == mid);
       }
-
-      // nội dung chung của lớp: GV ghi, cả lớp đọc
-      match /posts/{id}     { allow read: if inClass(cid); allow write: if isTeacher(cid); }
-      match /slides/{id}    { allow read: if inClass(cid); allow write: if isTeacher(cid); }
-      match /files/{id}     { allow read: if inClass(cid); allow write: if isTeacher(cid); }
+      match /posts/{id} { allow read: if inClass(cid); allow write: if isTeacher(cid); }
+      match /slides/{id} { allow read: if inClass(cid); allow write: if isTeacher(cid); }
+      match /files/{id} { allow read: if inClass(cid); allow write: if isTeacher(cid); }
       match /questions/{id} { allow read: if inClass(cid); allow write: if isTeacher(cid); }
-      match /tests/{id}     { allow read: if inClass(cid); allow write: if isTeacher(cid); }
-
-      // dữ liệu riêng từng học sinh
+      match /tests/{id} { allow read: if inClass(cid); allow write: if isTeacher(cid); }
       match /notes/{sid} { allow read: if isTeacher(cid) || (signedIn() && request.auth.uid == sid); allow write: if isTeacher(cid); }
       match /marks/{sid} { allow read: if isTeacher(cid) || (signedIn() && request.auth.uid == sid); allow write: if isTeacher(cid); }
       match /reads/{sid} { allow read, write: if signedIn() && request.auth.uid == sid; }
-
       match /logs/{lid} {
         allow read: if isTeacher(cid) || (signedIn() && resource.data.uid == request.auth.uid);
-        allow create, update: if (isMember(cid) && request.resource.data.uid == request.auth.uid && lid.matches(request.auth.uid + '_[0-9]{6}'))
-                              || (isTeacher(cid) && request.resource.data.get('sample', false) == true && lid.matches('mau[0-9]+_[0-9]{6}'));
+        allow create, update: if (isMember(cid) && request.resource.data.uid == request.auth.uid && lid.matches(request.auth.uid + '_[0-9]{6}')) || (isTeacher(cid) && isSample() && lid.matches('mau[0-9]+_[0-9]{6}'));
       }
-
       match /subs/{sid} {
         allow read: if isTeacher(cid) || (signedIn() && resource.data.uid == request.auth.uid);
-        allow create: if (isMember(cid) && request.resource.data.uid == request.auth.uid && sid == request.resource.data.tid + '_' + request.auth.uid)
-                      || (isTeacher(cid) && request.resource.data.get('sample', false) == true);  // lớp mẫu do giáo viên tạo
-        // HS chỉ sửa bài của mình khi chưa nộp; GV chỉ chấm (không đổi câu trả lời)
-        allow update: if (isMember(cid) && resource.data.uid == request.auth.uid && resource.data.end == null && request.resource.data.uid == request.auth.uid)
-                      || (isTeacher(cid) && request.resource.data.answers == resource.data.answers);
+        allow create: if (isMember(cid) && request.resource.data.uid == request.auth.uid && sid == request.resource.data.tid + '_' + request.auth.uid) || (isTeacher(cid) && isSample());
+        allow update: if (isMember(cid) && resource.data.uid == request.auth.uid && resource.data.end == null && request.resource.data.uid == request.auth.uid) || (isTeacher(cid) && request.resource.data.answers == resource.data.answers);
         allow delete: if isTeacher(cid);
       }
     }
