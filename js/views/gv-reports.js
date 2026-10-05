@@ -6,27 +6,30 @@ import { MOD, OBJ } from '../core/qbank.js';
 import { gradebook, testResults, parentReport, levelCls } from '../core/insight.js';
 import { buildXlsx, buildDocx, toBlob, csv } from '../lib/office.js';
 import { STRATEGIES } from '../../app/analytics.js';
+import { dossier, previewHTML, exportPDF, fileName } from './parent-report.js';
 
 let pick = null;
 export default {
   title: 'Báo cáo & xuất điểm',
   onData: () => false,
   render(el, ctx) {
-    const c = D.cls(); const S = D.students(c); pick ||= S[0]?.id;
+    const c = D.cls(); const S = D.students(c); if (!S.some(s => s.id === pick)) pick = S[0]?.id;
     const tests = c.tests.filter(t => t.status !== 'draft').sort((a, b) => (a.date || 0) - (b.date || 0));
     el.innerHTML = `<div class="grid g3" style="margin-bottom:18px">
       <div class="card stack"><span class="ic" style="width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--land-soft);color:var(--land)">${ic('excel')}</span><h3>Bảng điểm cả lớp</h3><p class="muted" style="font-size:13.5px">Tất cả bài kiểm tra, ĐTB môn theo TT 22, mức tham chiếu và lời nhận xét – một trang tính để chép sang vnEdu/SMAS.</p><button class="btn pri" id="xg">${ic('download')} Tải Excel</button></div>
       <div class="card stack"><span class="ic" style="width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--ocean-soft);color:var(--ocean)">${ic('target')}</span><h3>Mức nắm vững theo mục tiêu</h3><p class="muted" style="font-size:13.5px">Ma trận học sinh × mã mục tiêu từ luyện tập và kiểm tra – dùng cho báo cáo chuyên môn, minh chứng dự án.</p><button class="btn" id="xm">${ic('download')} Tải Excel</button></div>
       <div class="card stack"><span class="ic" style="width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--sun-soft);color:var(--warn)">${ic('pulse')}</span><h3>Nhật kí học tập</h3><p class="muted" style="font-size:13.5px">Toàn bộ thao tác trên mô hình và câu trả lời (ẩn danh hoá được) – dữ liệu gốc để nghiên cứu, đánh giá tác động.</p><button class="btn" id="xl">${ic('download')} Tải CSV</button></div></div>
-    <div class="card"><div class="card-h"><div><h2>Phiếu báo cáo gửi phụ huynh</h2><p>Một trang: tiến độ, điểm, điểm mạnh, việc cần làm và lời nhắn của giáo viên</p></div>
-      <div class="row"><select class="inp" id="who">${S.map(s => `<option value="${s.id}" ${s.id === pick ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select><button class="btn pri" id="xp">${ic('word')} Tải Word</button></div></div>
-      <div id="rep"></div></div>`;
-    const draw = () => { const d = parentReport(c, pick, D.analyticsView(c)); const u = D.userOf(pick);
-      $('#rep').innerHTML = `<div class="report"><div class="rh"><div><span class="eyebrow">Phiếu thông tin học tập môn Địa lí</span><h2>${esc(u.name)}</h2><span class="muted">${esc(c.name)} · ngày ${dfull(Date.now())}</span></div><div style="text-align:right"><span class="muted" style="font-size:12px">ĐTB môn (tạm tính)</span><div class="num" style="font:700 34px var(--display)">${n1(d.dtb)}</div>${d.level ? `<span class="pill ${levelCls(d.level)}">${d.level}</span>` : ''}</div></div>
-        <div class="grid g2" style="gap:18px"><div><h3 style="font-size:15px;margin-bottom:6px">Tiến độ học</h3><p>Hoàn thành <b>${pct(d.P.pctAvail)}</b> các mô-đun đã mở (${d.P.nDone}/${d.P.mods.length} mô-đun cả năm).</p>
-          <h3 style="font-size:15px;margin:12px 0 6px">Điểm kiểm tra</h3>${d.gb.marks.length ? `<ul style="margin:0;padding-left:18px">${d.gb.marks.map(m => `<li>${esc(m.t.title)} (${dd(m.t.date)}): <b>${n1(m.score)}</b></li>`).join('')}</ul>` : '<p class="muted">Chưa có.</p>'}</div>
-          <div><h3 style="font-size:15px;margin-bottom:6px">Nhận xét của giáo viên</h3><p>${esc(d.note?.text || d.text)}</p>
-          <h3 style="font-size:15px;margin:12px 0 6px">Gia đình có thể hỗ trợ</h3><ul style="margin:0;padding-left:18px">${(d.sum.flags.length ? d.sum.flags.slice(0, 2).map(f => `<li>${esc(STRATEGIES[f.strategy].how)}</li>`) : ['<li>Duy trì thói quen học đều mỗi ngày 15 – 20 phút.</li>']).join('')}${d.T.filter(t => !t.optional).slice(0, 2).map(t => `<li>Nhắc em hoàn thành: ${esc(t.title)}</li>`).join('')}</ul></div></div></div>`; };
+    <div class="card"><div class="card-h"><div><h2>Phiếu báo cáo gửi phụ huynh</h2><p>2 trang A4: điểm các bài và bài giữa kì I, nhận xét của giáo viên, thời gian học trực tuyến, nỗ lực, mục tiêu đã đạt – cần cải thiện, thói quen và đề xuất</p></div>
+      <div class="row" style="flex-wrap:wrap"><select class="inp" id="who" style="max-width:240px">${S.map(s => `<option value="${s.id}" ${s.id === pick ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select>
+        <button class="btn pri" id="xpdf">${ic('download')} Tải PDF</button><button class="btn" id="xall">${ic('download')} PDF cả lớp</button><button class="btn ghost" id="xp">${ic('word')} Word</button></div></div>
+      <div class="prog" id="pp" hidden style="margin-bottom:10px"><i style="width:0%"></i></div>
+      <div id="rep" style="overflow-x:auto"></div></div>`;
+    const draw = () => { try { $('#rep').innerHTML = previewHTML(dossier(c, pick), innerWidth < 720 ? Math.min(.6, (innerWidth - 60) / 794) : .62); const f = $('#rep iframe'); f.onload = () => { try { f.style.height = f.contentDocument.body.scrollHeight + 16 + 'px'; } catch (e) { /* */ } }; } catch (e) { console.error(e); $('#rep').innerHTML = '<p class="muted">Chưa đủ dữ liệu để lập phiếu.</p>'; } };
+    const run = async (btn, sids, name) => { const old = btn.innerHTML; btn.disabled = true; btn.textContent = 'Đang tạo PDF…'; $('#pp').hidden = false;
+      try { const blob = await exportPDF(c, sids, k => { $('#pp i').style.width = Math.round(k * 100) + '%'; }); await saveFile(name, blob, 'application/pdf'); }
+      catch (e) { console.error(e); toast(e.message || 'Không tạo được PDF', 'alert'); } finally { btn.disabled = false; btn.innerHTML = old; $('#pp').hidden = true; } };
+    $('#xpdf').onclick = () => run($('#xpdf'), [pick], fileName(c, D.userOf(pick)));
+    $('#xall').onclick = () => run($('#xall'), S.map(s => s.id), `Phieu_bao_cao_GHK1_ca_lop_${c.name.replace(/\s+/g, '')}.pdf`);
     draw();
     $('#who').onchange = e => { pick = e.target.value; draw(); };
     $('#xg').onclick = () => {

@@ -77,7 +77,16 @@ const start = {
         <label class="field"><span>Tên lớp</span><input class="inp" id="n" placeholder="Lớp 10A2"></label>
         <div class="row"><label class="field" style="flex:1"><span>Khối</span><select class="inp" id="g"><option>10</option><option>11</option><option>12</option><option>6</option><option>7</option><option>8</option><option>9</option></select></label>
         <label class="field" style="flex:1"><span>Năm học</span><input class="inp" id="y" value="2026–2027"></label></div>
-        <div class="err-msg" id="err"></div><button class="btn pri lg" id="ok">${ic('plus')} Tạo lớp</button></div></div>`;
+        <div class="err-msg" id="err"></div><button class="btn pri lg" id="ok">${ic('plus')} Tạo lớp</button></div></div>
+        ${D.myClasses().some(c => c.sample) ? '' : `<div class="card" style="max-width:560px;margin:0 auto 24px"><div class="stack" style="gap:10px"><span class="eyebrow">Dùng thử với dữ liệu mẫu</span><h3>Lớp mẫu 10KHXH5</h3>
+          <p class="muted" style="font-size:13.5px">41 học sinh với đầy đủ dữ liệu mô phỏng: 6 tuần học trên mô hình 3D, 3 bài kiểm tra thường xuyên, đề và điểm kiểm tra giữa học kì I, nhận xét mẫu – dùng để trình diễn phân tích và phiếu báo cáo gửi phụ huynh.</p>
+          <div class="prog" id="sp" hidden><i style="width:0%"></i></div><div class="err-msg" id="serr"></div>
+          <button class="btn lg" id="sample">${ic('spark')} Tạo lớp mẫu 10KHXH5</button></div></div>`}`;
+      $('#sample') && ($('#sample').onclick = async () => {
+        const b = $('#sample'); b.disabled = true; b.textContent = 'Đang tạo lớp mẫu…'; $('#sp').hidden = false;
+        try { await D.createSampleClass(k => { $('#sp i').style.width = Math.round(k * 100) + '%'; }); toast('Đã tạo Lớp 10KHXH5 với dữ liệu mẫu', 'check'); location.hash = 'gv-tong-quan'; }
+        catch (e) { $('#serr').textContent = e.message; b.disabled = false; b.textContent = 'Thử lại'; }
+      });
       $('#ok').onclick = async () => { const n = $('#n').value.trim(); if (n.length < 2) { $('#err').textContent = 'Nhập tên lớp.'; return; } const c = await D.createClass({ name: n, grade: +$('#g').value, year: $('#y').value }); toast(`Đã tạo ${c.name} – mã lớp ${c.code}`, 'check'); location.hash = 'gv-lop'; };
     } else {
       el.innerHTML = `<div class="card" style="max-width:520px;margin:24px auto"><div class="stack" style="gap:14px">

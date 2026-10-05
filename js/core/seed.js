@@ -1,7 +1,8 @@
-// Dữ liệu mẫu cho bản chạy thử: 1 giáo viên, lớp 10A1 với 30 học sinh (tên giả lập), dấu vết học tập 4 tuần.
+// Dữ liệu mẫu cho bản chạy thử: 1 giáo viên; lớp mẫu 10KHXH5 (41 HS, đến sau kiểm tra giữa kì I) và lớp 10A1 (30 HS, tên giả lập).
 import { BANK, MODULES } from '../../app/bank.js';
 import { emptyClass } from './data-demo.js';
 import { generate, allQ, gradeItem, makeVariants } from './qbank.js';
+import { buildSample } from './sample.js';
 
 const DAY = 864e5;
 const NAMES = ['Nguyễn Minh Anh', 'Trần Gia Bảo', 'Lê Ngọc Châu', 'Phạm Đức Duy', 'Hoàng Thu Giang', 'Vũ Minh Hiếu', 'Đặng Khánh Huyền', 'Bùi Quang Huy', 'Đỗ Mai Khanh', 'Ngô Tuấn Kiệt',
@@ -14,7 +15,7 @@ export const DEMO = { gv: { email: 'gv@aida.demo', pw: 'giaovien' }, hs: { email
 export async function seedDB(hash) {
   const now = Date.now(); const r = rng(20261002);
   const users = {};
-  const gv = { uid: 'gv01', name: 'Trần Việt Hoàng', email: DEMO.gv.email, role: 'gv', pw: await hash(DEMO.gv.pw), classes: ['c-10a1'], created: now - 40 * DAY };
+  const gv = { uid: 'gv01', name: 'Trần Việt Hoàng', email: DEMO.gv.email, role: 'gv', pw: await hash(DEMO.gv.pw), classes: ['c-10khxh5', 'c-10a1'], created: now - 50 * DAY };
   users.gv01 = gv;
   const hsPw = await hash(DEMO.hs.pw);
   const PROF = ['steady', 'steady', 'steady', 'steady', 'crammer', 'crammer', 'nightowl', 'guesser', 'misc', 'struggler', 'skipper', 'inactive'];
@@ -105,5 +106,10 @@ export async function seedDB(hash) {
       { k: 'DL10.02.02', h: 'Chuyển động quanh Mặt Trời', ul: ['Các mùa trong năm', 'Ngày đêm dài ngắn theo mùa và theo vĩ độ'] },
     ] },
   );
-  return { v: 3, demo: true, users, classes: { [c.id]: c } };
+  // lớp mẫu 10KHXH5 – dữ liệu đầy đủ đến sau kiểm tra giữa học kì I
+  const S = buildSample({ now, teacher: 'gv01', teacherName: gv.name, prefix: 'mau' });
+  S.studs.forEach(st => { users[st.id] = { uid: st.id, name: st.name, email: st.email, role: 'hs', pw: hsPw, classes: ['c-10khxh5'], created: now - 45 * DAY }; });
+  const k = emptyClass({ ...S.cls, id: 'c-10khxh5', code: 'KHXH05', members: S.studs.map(st => st.id) });
+  Object.assign(k, { events: S.events, attempts: S.attempts, tests: S.tests, subs: S.subs, notes: S.notes, posts: S.posts });
+  return { v: 4, demo: true, users, classes: { [k.id]: k, [c.id]: c } };
 }

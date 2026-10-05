@@ -17,6 +17,7 @@ const f = name => (...a) => B[name](...a);
 export const me = f('me'), userName = f('userName'), userOf = f('userOf');
 export const register = f('register'), login = f('login'), logout = f('logout'), changePassword = f('changePassword');
 export const classByCode = f('classByCode'), myClasses = f('myClasses'), cls = f('cls'), switchClass = f('switchClass');
+export const createSampleClass = f('createSampleClass');
 export const createClass = f('createClass'), joinClass = f('joinClass'), addStudents = f('addStudents'), students = f('students');
 export const teachers = f('teachers'), approveTeacher = f('approveTeacher');
 export const resetDemo = f('resetDemo'), putFile = f('putFile'), getFile = f('getFile'), delFile = f('delFile'), analyticsView = f('analyticsView');

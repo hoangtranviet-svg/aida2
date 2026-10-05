@@ -57,12 +57,14 @@ service cloud.firestore {
 
       match /logs/{lid} {
         allow read: if isTeacher(cid) || (signedIn() && resource.data.uid == request.auth.uid);
-        allow create, update: if isMember(cid) && request.resource.data.uid == request.auth.uid && lid.matches(request.auth.uid + '_[0-9]{6}');
+        allow create, update: if (isMember(cid) && request.resource.data.uid == request.auth.uid && lid.matches(request.auth.uid + '_[0-9]{6}'))
+                              || (isTeacher(cid) && request.resource.data.get('sample', false) == true && lid.matches('mau[0-9]+_[0-9]{6}'));
       }
 
       match /subs/{sid} {
         allow read: if isTeacher(cid) || (signedIn() && resource.data.uid == request.auth.uid);
-        allow create: if isMember(cid) && request.resource.data.uid == request.auth.uid && sid == request.resource.data.tid + '_' + request.auth.uid;
+        allow create: if (isMember(cid) && request.resource.data.uid == request.auth.uid && sid == request.resource.data.tid + '_' + request.auth.uid)
+                      || (isTeacher(cid) && request.resource.data.get('sample', false) == true);  // lớp mẫu do giáo viên tạo
         // HS chỉ sửa bài của mình khi chưa nộp; GV chỉ chấm (không đổi câu trả lời)
         allow update: if (isMember(cid) && resource.data.uid == request.auth.uid && resource.data.end == null && request.resource.data.uid == request.auth.uid)
                       || (isTeacher(cid) && request.resource.data.answers == resource.data.answers);

@@ -121,6 +121,36 @@ export async function createClass({ name, grade = 10, year }) {
   await b.commit(); classList.push({ id: ref.id, name: name.trim(), code }); lsSet('aida2-fb-cid-' + user.uid, ref.id); await openClass(ref.id);
   return C;
 }
+// Lớp mẫu 10KHXH5: ghi toàn bộ dữ liệu mô phỏng vào Firestore (học sinh mẫu không có tài khoản đăng nhập)
+export async function createSampleClass(onStep) {
+  if (!me().approved) throw new Error('Tài khoản giáo viên chưa được phê duyệt.');
+  const { buildSample } = await import('./sample.js');
+  const S = buildSample({ teacher: user.uid, teacherName: user.name, prefix: 'mau' });
+  let code = code6(); for (let i = 0; i < 5 && (await F.getDoc(F.doc(fs, 'codes', code))).exists(); i++) code = code6();
+  const ref = F.doc(F.collection(fs, 'classes')); const cid = ref.id; const P = (...p) => F.doc(fs, 'classes', cid, ...p);
+  const b0 = F.writeBatch(fs);
+  b0.set(ref, clean({ ...S.cls, code })); b0.set(F.doc(fs, 'codes', code), { cid }); b0.update(F.doc(fs, 'users', user.uid), { classes: F.arrayUnion(cid) });
+  await b0.commit().catch(e => { throw new Error('Không tạo được lớp mẫu: ' + (e.code || e.message)); }); onStep?.(.1);
+  const ops = [];
+  S.studs.forEach(st => ops.push([P('members', st.id), { name: st.name, email: st.email, code, joined: S.cls.created, sample: true }]));
+  const logs = {}; const ymOf = ts => { const d = new Date(ts); return d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0'); };
+  S.events.forEach(e => { const k = e.s + '_' + ymOf(e.ts); (logs[k] ||= { uid: e.s, events: [], attempts: [], sample: true }).events.push(e); });
+  S.attempts.forEach(a => { const k = a.s + '_' + ymOf(a.ts); (logs[k] ||= { uid: a.s, events: [], attempts: [], sample: true }).attempts.push(a); });
+  Object.entries(logs).forEach(([k, v]) => ops.push([P('logs', k), v]));
+  const marks = {};
+  S.tests.forEach(t => { const { scores, ...rest } = t; ops.push([P('tests', t.id), rest]); if (scores) Object.entries(scores).forEach(([sid, row]) => ((marks[sid] ||= {})[t.id] = row)); });
+  Object.entries(marks).forEach(([sid, m]) => ops.push([P('marks', sid), m]));
+  S.subs.forEach(x => ops.push([P('subs', x.id), x]));
+  Object.entries(S.notes).forEach(([sid, n]) => ops.push([P('notes', sid), n]));
+  S.posts.forEach(p => ops.push([P('posts', p.id), p]));
+  for (let i = 0; i < ops.length; i += 120) {
+    const b = F.writeBatch(fs); ops.slice(i, i + 120).forEach(([r, d]) => b.set(r, clean(d)));
+    await b.commit().catch(e => { throw new Error('Ghi dữ liệu lớp mẫu bị từ chối (' + (e.code || e.message) + '). Hãy cập nhật quy tắc bảo mật Firestore mới nhất.'); });
+    onStep?.(.1 + .9 * Math.min(1, (i + 120) / ops.length));
+  }
+  classList.push({ id: cid, name: S.cls.name, code }); lsSet('aida2-fb-cid-' + user.uid, cid); await openClass(cid);
+  return C;
+}
 export async function joinClass(code) {
   const CODE = String(code || '').trim().toUpperCase(); const s = await F.getDoc(F.doc(fs, 'codes', CODE)); if (!s.exists()) throw new Error('Mã lớp không đúng.');
   const cid = s.data().cid;

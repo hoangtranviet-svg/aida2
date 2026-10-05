@@ -31,7 +31,7 @@ const isAdminEmail = e => ADMINS.includes(String(e || '').toLowerCase());
 export async function init(cfg, admins = []) {
   ADMINS = ['gv@aida.demo', ...admins.map(a => a.toLowerCase())];
   db = store.get(KEY);
-  if (!db || !db.v) { const { seedDB } = await import('./seed.js'); db = await seedDB(hash); store.set(KEY, db); }
+  if (!db || !db.v || db.v < 4) { const { seedDB } = await import('./seed.js'); db = await seedDB(hash); store.set(KEY, db); }
   session = (() => { try { return JSON.parse(sessionStorage.getItem(SKEY)); } catch (e) { return null; } })() || store.get(SKEY + '-keep');
   if (session && !db.users[session.uid]) session = null;
   return db;
@@ -77,6 +77,16 @@ export async function createClass({ name, grade = 10, year }) {
   const u = db.users[session.uid]; if (!me().approved) throw new Error('Tài khoản giáo viên chưa được phê duyệt.'); const c = emptyClass({ name: name.trim(), grade, year: year || '2026–2027', teacher: u.uid });
   while (classByCode(c.code)) c.code = code6();
   db.classes[c.id] = c; u.classes.push(c.id); session.cid = c.id; saveSession(); persist({ type: 'class' }); return c;
+}
+// lớp mẫu 10KHXH5 đầy đủ dữ liệu (học sinh mẫu đăng nhập bằng mật khẩu "hocsinh")
+export async function createSampleClass(onStep) {
+  if (!me().approved) throw new Error('Tài khoản giáo viên chưa được phê duyệt.');
+  const { buildSample } = await import('./sample.js'); const u = db.users[session.uid];
+  const pre = 'm' + Math.random().toString(36).slice(2, 6); const S = buildSample({ teacher: u.uid, teacherName: u.name, prefix: pre });
+  const pw = await hash('hocsinh'); const c = emptyClass({ ...S.cls, teacher: u.uid, members: S.studs.map(s => s.id) }); while (classByCode(c.code)) c.code = code6();
+  S.studs.forEach(st => { db.users[st.id] = { uid: st.id, name: st.name, email: pre + '.' + st.email, role: 'hs', pw, classes: [c.id], created: Date.now() }; });
+  Object.assign(c, { events: S.events, attempts: S.attempts, tests: S.tests, subs: S.subs, notes: S.notes, posts: S.posts });
+  db.classes[c.id] = c; u.classes.unshift(c.id); session.cid = c.id; saveSession(); persist({ type: 'class' }); onStep?.(1); return c;
 }
 export async function joinClass(code) {
   const c = classByCode(code); if (!c) throw new Error('Mã lớp không đúng.');
