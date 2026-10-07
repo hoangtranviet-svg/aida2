@@ -3,15 +3,32 @@ import * as D from '../core/data.js';
 import { $, esc, toast, initials } from '../core/util.js';
 import { ic, LOGO } from '../core/icons.js';
 import { DEMO } from '../core/seed.js';
-import { mountGlobe } from '../core/globe.js';
+import { mountHero } from '../core/hero3d.js';
 
-const art = (title, text) => `<section class="auth-art"><a class="logo" href="#gioi-thieu">${LOGO}<span><b>AIDA 2.0</b><small>ĐỊA LÍ · LỚP HỌC SỐ</small></span></a>
-  <div><h1>${title}</h1><p>${text}</p></div>
-  <div class="auth-coords">21°01′B · 105°51′Đ · Hà Nội — mã mục tiêu DL10.04.03</div></section>`;
+// Màn hình chờ đăng nhập: hình nền AIDA 2.0 dựng thành mô hình 3D (js/core/hero3d.js)
+const HERO = `<div class="si-hud si-top"><span>Hình 1 · Mô hình 3D Trái Đất</span><span>tâm hình <b id="hudc">13°B · 106,5°Đ</b></span></div>
+  <div class="si-hud si-bot">21°01′B · 105°51′Đ · Hà Nội</div>
+  <section class="si-copy">
+    <p class="si-award">Giải thưởng Tiên phong ứng dụng AI<br>trong giáo dục Việt Nam 2026</p>
+    <h1><a href="#gioi-thieu" aria-label="AIDA 2.0 – giới thiệu">AIDA <em>2.0</em></a></h1>
+    <p class="si-sub"><b>Lớp học số Địa lí</b>Học liệu 3D &amp; AI phân tích thói quen học tập</p>
+    <p class="si-quote">Không chỉ biết đúng hay sai –<br>mà biết vì sao và học tiếp thế nào.</p>
+  </section>
+  <footer class="si-foot"><b>Trần Việt Hoàng</b><span>Wellspring Hanoi International Bilingual School</span><small>Lớp 10KHXH5 · HK I · 2026–2027</small></footer>`;
 
 function shell(el, title, text, form) {
-  el.innerHTML = `<div class="auth fade-in">${art(title, text)}<section class="auth-form"><div class="auth-card">${form}</div></section></div>`;
-  return mountGlobe($('.auth-art', el), { markers: [{ lat: 21, lon: 105.8 }], zoom: 3.4, speed: .05 });
+  el.innerHTML = `<div class="auth signin fade-in"><div class="si-stage" aria-hidden="true"></div>${HERO}<section class="auth-card">${form}</section></div>`;
+  const stage = $('.si-stage', el), card = $('.auth-card', el), hudc = $('#hudc', el);
+  let last = '';
+  const layout = (W, H) => {
+    if (getComputedStyle(stage).position !== 'absolute') return { cx: W / 2, cy: H * .46, r: Math.min(W * .3, H * .3), side: 'right', legend: W < 720 };
+    const sr = stage.getBoundingClientRect(), rel = e => { const b = e.getBoundingClientRect(); return { x: b.left - sr.left, y: b.top - sr.top, w: b.width, h: b.height }; };
+    const c = rel(card), avoid = [...el.querySelectorAll('.si-copy>*,.si-foot')].map(rel), r = Math.max(170, Math.min(H * .34, c.x * .36, 420));
+    return { cx: c.x - r * (c.x < 700 ? .4 : .56), cy: H * (c.x < 700 ? .6 : .56), r, side: 'left', avoid, block: [...avoid, c] };
+  };
+  let stop = () => {}, dead = false;
+  mountHero(stage, { layout, hud: t => { if (t !== last) { last = t; hudc.textContent = t; } } }).then(s => { if (dead) s(); else stop = s; });
+  return () => { dead = true; stop(); };
 }
 
 const login = {
