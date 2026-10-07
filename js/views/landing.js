@@ -59,7 +59,7 @@ export default {
       <h2 style="margin-top:8px">${MODULES.length} mô-đun, xếp theo chương</h2>
       <div class="mods" style="margin-top:20px">${MODULES.map(m => `<div class="mod"><span class="mod-n">${m.bai.toUpperCase()} · ${m.code}</span><div class="mod-t">${m.title}</div><span class="muted" style="font-size:12.5px">${m.chap}</span></div>`).join('')}</div>
     </section>
-    <footer class="foot">AIDA 2.0 · Trần Việt Hoàng · Dự án dự thi Giải thưởng Tiên phong ứng dụng AI trong giáo dục 2026</footer></div>`;
+    <footer class="foot">AIDA 2.0 · Trần Việt Hoàng</footer></div>`;
     el.querySelectorAll('[data-to]').forEach(a => (a.onclick = e => { e.preventDefault(); document.getElementById(a.dataset.to)?.scrollIntoView({ behavior: 'smooth' }); }));
     return mountGlobe($('#globe'), { markers: [{ lat: 21, lon: 105.8 }, { lat: 10.8, lon: 106.7 }], zoom: 3.05, speed: .09 });
   },
