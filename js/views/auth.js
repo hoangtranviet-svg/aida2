@@ -9,7 +9,7 @@ import { mountHero } from '../core/hero3d.js';
 const HERO = `<div class="si-hud si-top"><span>Hình 1 · Mô hình 3D Trái Đất</span><span>tâm hình <b id="hudc">13°B · 106,5°Đ</b></span></div>
   <div class="si-hud si-bot">21°01′B · 105°51′Đ · Hà Nội</div>
   <section class="si-copy">
-    <p class="si-award">Giải thưởng Tiên phong ứng dụng AI<br>trong giáo dục Việt Nam 2026</p>
+    <span class="si-award" aria-hidden="true"></span>
     <h1><a href="#gioi-thieu" aria-label="AIDA 2.0 – giới thiệu">AIDA <em>2.0</em></a></h1>
     <p class="si-sub"><b>Lớp học số Địa lí</b>Học liệu 3D &amp; AI phân tích thói quen học tập</p>
     <p class="si-quote">Không chỉ biết đúng hay sai –<br>mà biết vì sao và học tiếp thế nào.</p>

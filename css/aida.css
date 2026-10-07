@@ -352,7 +352,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 .si-copy a{pointer-events:auto}
 .si-copy>*,.si-foot>*{width:fit-content}
 .si-copy{grid-area:copy;align-self:start;margin-top:clamp(8px,6vh,72px);max-width:560px;text-shadow:0 2px 18px rgba(5,10,50,.55)}
-.si-award{font:700 12.5px/1.75 'Be Vietnam Pro',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--hgold);position:relative;padding-top:22px}
+.si-award{display:block;font:700 12.5px/1.75 'Be Vietnam Pro',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--hgold);position:relative;padding-top:22px}
 .si-award::before{content:"";position:absolute;left:0;top:0;width:38px;height:3px;background:var(--hred);border-radius:2px}
 .signin h1{margin:18px 0 0;font:800 clamp(60px,7.4vw,124px)/.92 'Be Vietnam Pro',var(--display);letter-spacing:-.045em}
 .signin h1 a{color:#fff;text-decoration:none}
