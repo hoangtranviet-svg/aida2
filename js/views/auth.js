@@ -14,7 +14,7 @@ const HERO = `<div class="si-hud si-top"><span>Hình 1 · Mô hình 3D Trái Đ�
     <p class="si-sub"><b>Lớp học số Địa lí</b>Học liệu 3D &amp; AI phân tích thói quen học tập</p>
     <p class="si-quote">Không chỉ biết đúng hay sai –<br>mà biết vì sao và học tiếp thế nào.</p>
   </section>
-  <footer class="si-foot"><b>Trần Việt Hoàng</b><span>Wellspring Hanoi International Bilingual School</span><small>Lớp 10KHXH5 · HK I · 2026–2027</small></footer>`;
+  <footer class="si-foot"><b>Trần Việt Hoàng</b><span>Wellspring Hanoi International Bilingual School</span></footer>`;
 
 function shell(el, title, text, form) {
   el.innerHTML = `<div class="auth signin fade-in"><div class="si-stage" aria-hidden="true"></div>${HERO}<section class="auth-card">${form}</section></div>`;
