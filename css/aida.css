@@ -511,3 +511,20 @@ details>summary::-webkit-details-marker{display:none}
 details>summary::before{content:"▸ ";color:var(--muted)}
 details[open]>summary::before{content:"▾ "}
 .card.banner{padding:16px 18px}
+
+/* dữ liệu học tập theo mô-đun */
+.modal.xl{width:min(1180px,100%)}
+.md-h{font-size:14px;margin:0 0 10px}
+.md-err{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:7px 10px;border-radius:9px;background:var(--bad-soft);font-size:13px}
+.md-err+.md-err{margin-top:6px}
+.md-err .mono{font-size:12px;color:var(--bad);font-weight:600}
+.md-q{padding:9px 11px;border:1px solid var(--line);border-radius:10px;font-size:13.5px;margin-top:8px;background:var(--surface)}
+.md-tl{list-style:none;margin:0;padding:2px 0 2px 22px;background:linear-gradient(var(--line),var(--line)) 5px 0/2px 100% no-repeat;display:flex;flex-direction:column;gap:10px;font-size:13px;max-height:340px;overflow:auto}
+.md-tl li{position:relative}
+.md-tl li::before{content:"";position:absolute;left:-21px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--ocean-2);border:2px solid var(--surface)}
+.tbl tr.md-row>td{background:var(--raise);padding:16px 18px}
+.tbl tr.md-row:hover>td{background:var(--raise)}
+.tbl tr.open td{background:var(--ocean-soft)}
+.md-detail .pill svg{width:12px;height:12px}
+.mod-stat{border:0;background:none;padding:0;font:inherit;font-size:12.5px;color:var(--ocean);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;cursor:pointer}
+.mod-stat:hover{text-decoration-style:solid}
