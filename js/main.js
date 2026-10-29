@@ -17,14 +17,16 @@ const NAV = {
     ['Lớp', [['hs-bang-tin', 'Bảng tin', 'megaphone']]],
   ],
 };
+// phiên bản (từ index.html) để trình duyệt tải lại màn hình mới sau mỗi lần cập nhật
+const VQ = (v => v ? '?v=' + v : '')(new URL(import.meta.url).searchParams.get('v'));
 const VIEWS = {
-  'gioi-thieu': () => import('./views/landing.js'), 'dang-nhap': () => import('./views/auth.js'), 'dang-ki': () => import('./views/auth.js'), 'bat-dau': () => import('./views/auth.js'), 'cho-duyet': () => import('./views/auth.js'), 'quan-tri': () => import('./views/admin.js'),
-  'gv-tong-quan': () => import('./views/gv-overview.js'), 'gv-lop': () => import('./views/gv-class.js'), 'gv-mo-dun': () => import('./views/gv-modules.js'), 'gv-bang-tin': () => import('./views/board.js'),
-  'gv-bai-giang': () => import('./views/slides.js'), 'gv-ngan-hang': () => import('./views/gv-bank.js'), 'gv-tao-de': () => import('./views/gv-testgen.js'),
-  'gv-kiem-tra': () => import('./views/gv-tests.js'), 'gv-phan-tich': () => import('./views/gv-analysis.js'), 'gv-thoi-quen': () => import('./views/gv-habits.js'), 'gv-nhan-xet': () => import('./views/gv-comments.js'), 'gv-bao-cao': () => import('./views/gv-reports.js'),
-  'hs-tien-trinh': () => import('./views/hs-progress.js'), 'hs-viec-can-lam': () => import('./views/hs-todo.js'), 'hs-lo-trinh': () => import('./views/hs-path.js'), 'hs-bai-giang': () => import('./views/slides.js'),
-  'hs-kiem-tra': () => import('./views/hs-tests.js'), 'hs-ket-qua': () => import('./views/hs-results.js'), 'hs-goi-y': () => import('./views/hs-advice.js'), 'hs-bang-tin': () => import('./views/board.js'),
-  'hs-hoc': () => import('./views/hs-study.js'), 'hs-lam-bai': () => import('./views/hs-exam.js'), 'cai-dat': () => import('./views/settings.js'),
+  'gioi-thieu': () => import('./views/landing.js' + VQ), 'dang-nhap': () => import('./views/auth.js' + VQ), 'dang-ki': () => import('./views/auth.js' + VQ), 'bat-dau': () => import('./views/auth.js' + VQ), 'cho-duyet': () => import('./views/auth.js' + VQ), 'quan-tri': () => import('./views/admin.js' + VQ),
+  'gv-tong-quan': () => import('./views/gv-overview.js' + VQ), 'gv-lop': () => import('./views/gv-class.js' + VQ), 'gv-mo-dun': () => import('./views/gv-modules.js' + VQ), 'gv-bang-tin': () => import('./views/board.js' + VQ),
+  'gv-bai-giang': () => import('./views/slides.js' + VQ), 'gv-ngan-hang': () => import('./views/gv-bank.js' + VQ), 'gv-tao-de': () => import('./views/gv-testgen.js' + VQ),
+  'gv-kiem-tra': () => import('./views/gv-tests.js' + VQ), 'gv-phan-tich': () => import('./views/gv-analysis.js' + VQ), 'gv-thoi-quen': () => import('./views/gv-habits.js' + VQ), 'gv-nhan-xet': () => import('./views/gv-comments.js' + VQ), 'gv-bao-cao': () => import('./views/gv-reports.js' + VQ),
+  'hs-tien-trinh': () => import('./views/hs-progress.js' + VQ), 'hs-viec-can-lam': () => import('./views/hs-todo.js' + VQ), 'hs-lo-trinh': () => import('./views/hs-path.js' + VQ), 'hs-bai-giang': () => import('./views/slides.js' + VQ),
+  'hs-kiem-tra': () => import('./views/hs-tests.js' + VQ), 'hs-ket-qua': () => import('./views/hs-results.js' + VQ), 'hs-goi-y': () => import('./views/hs-advice.js' + VQ), 'hs-bang-tin': () => import('./views/board.js' + VQ),
+  'hs-hoc': () => import('./views/hs-study.js' + VQ), 'hs-lam-bai': () => import('./views/hs-exam.js' + VQ), 'cai-dat': () => import('./views/settings.js' + VQ),
 };
 const PUBLIC = ['gioi-thieu', 'dang-nhap', 'dang-ki'];
 const FOCUS = ['hs-hoc', 'hs-lam-bai'];

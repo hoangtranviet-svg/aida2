@@ -5,7 +5,7 @@ import { ic } from '../core/icons.js';
 import { MODULES } from '../core/qbank.js';
 import { progress } from '../core/insight.js';
 import { statePill, modIcon } from './parts.js';
-import { moduleDetail } from './module-detail.js';
+import { moduleDetail } from './module-detail.js?v=1';
 
 const toLocal = ts => { const d = new Date(ts - new Date().getTimezoneOffset() * 6e4); return d.toISOString().slice(0, 16); };
 
