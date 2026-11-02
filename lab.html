@@ -45,7 +45,9 @@
 </div>
 <script type="module">
   const q = new URLSearchParams(location.search);
-  const id = (q.get('m') || location.hash.replace('#', '') || '09').replace(/\D/g, '').padStart(2, '0');
+  // mã mô hình: "09", "11" … hoặc mô hình con của một bài: "11a", "11b" …
+  const raw = (q.get('m') || location.hash.replace('#', '') || '09').toLowerCase().replace(/[^0-9a-z]/g, '');
+  const m2 = raw.match(/^(\d+)([a-z]?)$/); const id = m2 ? m2[1].padStart(2, '0') + m2[2] : '09';
   try {
     const { runLab } = await import('./lab/core.js');
     const mod = await import(`./lab/mods/m${id}.js`);

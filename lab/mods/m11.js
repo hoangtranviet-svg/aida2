@@ -1,5 +1,6 @@
 // 3D-11 · Bài 11 – Thuỷ quyển, nước trên lục địa
 import { THREE } from '../core.js';
+import { FAM11 } from './fam11.js';
 
 const W = 18, Dz = 8;
 // địa hình: biển phía tây (x < −3), đồng bằng, núi cao phía đông
@@ -17,7 +18,7 @@ function h(x, z) {
 const riverZ = x => .6 * Math.sin(x * .45) - .2;
 
 export default {
-  id: '3D-11', code: 'DL10.B11', title: 'Vòng tuần hoàn nước, nước trên lục địa',
+  id: '3D-11', lab: '11', family: FAM11, code: 'DL10.B11', title: 'Vòng tuần hoàn nước, nước trên lục địa',
   objectives: [
     { c: 'DL10.05.01', t: 'Khái niệm thuỷ quyển' },
     { c: 'DL10.05.02', t: 'Các nhân tố ảnh hưởng tới chế độ nước sông' },

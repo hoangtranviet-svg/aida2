@@ -34,6 +34,17 @@ export async function runLab(def) {
   $('#bar .code').textContent = `${def.code} · ${def.id}`;
   $('#bar h1').textContent = def.title;
   if (embedded) $('#bar .back').style.display = 'none';
+  // các mô hình cùng một bài (VD: Bài 11 có mô hình tổng quan và các mô hình chuyên sâu)
+  if (def.family?.length) {
+    const fam = el('div', { class: 'fam' }, '<div class="fam-t">Mô hình trong bài</div>');
+    const row = el('div', { class: 'fam-row' });
+    def.family.forEach((f, i) => {
+      const b = el('button', { type: 'button', class: f.id === def.lab ? 'on' : '', title: f.t }, `<b>${i + 1}</b><span>${f.t}</span>`);
+      b.onclick = () => { if (f.id === def.lab) return; track('model_switch', { to: f.id }); const u = new URL(location.href); u.searchParams.set('m', f.id); u.hash = ''; location.href = u.toString(); };
+      row.append(b);
+    });
+    fam.append(row); $('#panel .head').prepend(fam);
+  }
   const objs = $('#objs');
   (def.objectives || []).forEach(o => objs.append(el('span', { class: 'obj', title: o.t || '' }, o.c || o)));
 
@@ -155,7 +166,7 @@ export async function runLab(def) {
       const t = tasks.find(x => x.id === taskId); if (!t || t.done) return;
       t.done = true; renderTasks(); api.toast('✓ Hoàn thành: ' + t.short);
       track('task_done', { task: taskId, ms: Date.now() - session.start });
-      if (tasks.every(x => x.done)) { setTimeout(() => api.toast('🎉 Em đã hoàn thành tất cả nhiệm vụ của mô-đun!'), 2700); track('module_complete', { ms: Date.now() - session.start }); }
+      if (tasks.every(x => x.done)) { setTimeout(() => api.toast('🎉 Em đã hoàn thành tất cả nhiệm vụ của mô-đun!'), 2700); track(def.sub ? 'model_complete' : 'module_complete', { ms: Date.now() - session.start }); }
     },
     paused: false, speed: 1,
     // hình học dùng chung
