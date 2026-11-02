@@ -23,6 +23,8 @@ const curvePts = (ctrl, n = 160) => new THREE.SplineCurve(ctrl).getSpacedPoints(
 const TYPES = {
   mn: { name: 'Hồ móng ngựa', force: 'Ngoại lực – dòng chảy của sông', how: 'Sông uốn khúc: nước xói lở bờ lõm, bồi tụ bờ lồi → khúc uốn ngày càng cong, eo đất hẹp dần. Mùa lũ, nước phá eo, sông chảy thẳng; khúc uốn cũ bị phù sa bịt hai đầu thành hồ hình móng ngựa.', ex: 'Các hồ móng ngựa ven sông Hồng, sông Mi-xi-xi-pi (Hoa Kỳ), sông A-ma-dôn.' },
   kt: { name: 'Hồ kiến tạo', force: 'Nội lực – vận động kiến tạo (tách giãn, đứt gãy)', how: 'Lực kéo tách làm vỏ Trái Đất đứt gãy; một khối đá sụt xuống giữa các đường đứt gãy tạo thành vùng trũng sâu, kéo dài (địa hào). Nước sông, nước mưa đổ vào → hồ rất sâu.', ex: 'Hồ Bai-can (Nga) – hồ sâu nhất thế giới, khoảng 1 640 m; hồ Tan-ga-ni-ca, hồ Ma-la-uy ở thung lũng tách giãn Đông Phi.' },
+  bh: { name: 'Hồ băng hà', force: 'Ngoại lực – hoạt động của băng hà (sông băng)', how: 'Sông băng trượt xuống thung lũng, bào mòn khoét thành lòng chảo và đẩy đất đá thành dải băng tích chắn ngang. Khi khí hậu ấm lên, băng tan, nước đọng lại trong lòng chảo → hồ.', ex: 'Ngũ Hồ (Hồ Lớn) ở Bắc Mỹ; hàng chục nghìn hồ ở Phần Lan, Ca-na-đa.' },
+  nt: { name: 'Hồ nhân tạo', force: 'Con người – xây đập ngăn sông', how: 'Con người xây đập chắn ngang dòng sông; nước bị giữ lại, dâng lên ngập thung lũng phía trên đập thành hồ chứa.', ex: 'Hồ Hoà Bình (sông Đà), hồ Thác Bà (sông Chảy), hồ Trị An (sông Đồng Nai), hồ Dầu Tiếng (sông Sài Gòn).' },
   nl: { name: 'Hồ núi lửa', force: 'Nội lực – hoạt động núi lửa', how: 'Núi lửa phun trào làm buồng mác-ma rỗng đi; đỉnh núi sụp xuống tạo miệng hố rộng (miệng núi lửa, hõm chảo). Khi núi lửa ngừng hoạt động, nước mưa, nước ngầm đọng lại trong miệng hố → hồ tròn, sâu.', ex: 'Biển Hồ (hồ T’Nưng, Gia Lai), hồ Tơ Nưng; hồ Crây-tơ (Crater Lake, Hoa Kỳ).' },
 };
 
@@ -34,25 +36,32 @@ export default {
     { t: 'USGS – Oxbow lakes and meandering rivers', u: 'https://www.usgs.gov/media/images/oxbow-lake' },
     { t: 'Britannica – Lake Baikal', u: 'https://www.britannica.com/place/Lake-Baikal' },
     { t: 'NPS – Crater Lake: How the lake formed', u: 'https://www.nps.gov/crla/learn/nature/how-crater-lake-formed.htm' },
+    { t: 'NSIDC – Glacial landforms (hồ băng hà, băng tích)', u: 'https://nsidc.org/learn/parts-cryosphere/glaciers/glacier-landforms' },
   ],
   note: 'Tỉ lệ đứng, thời gian và kích thước được phóng đại để dễ quan sát; quá trình thực tế diễn ra trong hàng trăm đến hàng triệu năm.',
   view: { pos: [0, 10, 13], target: [0, 0, 0] },
   steps: [
-    { title: 'Hồ và nguồn gốc của hồ', html: '<p><b>Hồ</b> là vùng trũng chứa nước trên lục địa, không thông trực tiếp với biển. Theo <b>nguồn gốc hình thành</b>, có:</p><ul><li><b>Hồ do ngoại lực</b>: hồ móng ngựa (dòng chảy), hồ băng hà (băng bào mòn), hồ đá vôi…</li><li><b>Hồ do nội lực</b>: hồ kiến tạo, hồ núi lửa.</li><li><b>Hồ nhân tạo</b>: hồ thuỷ điện, hồ thuỷ lợi (VD: hồ Hoà Bình, hồ Dầu Tiếng).</li></ul><div class="tip">Chọn loại hồ, rồi bật <b>Tự chạy</b> hoặc kéo thanh <b>Quá trình hình thành</b>.</div>',
+    { title: 'Hồ và nguồn gốc của hồ', html: '<p><b>Hồ</b> là vùng trũng chứa nước trên lục địa, không thông trực tiếp với biển. Theo <b>nguồn gốc hình thành</b>, có:</p><ul><li><b>Hồ do ngoại lực</b>: hồ móng ngựa (dòng chảy), hồ băng hà (băng hà bào mòn)…</li><li><b>Hồ do nội lực</b>: hồ kiến tạo, hồ núi lửa.</li><li><b>Hồ nhân tạo</b>: hồ thuỷ điện, hồ thuỷ lợi (VD: hồ Hoà Bình, hồ Dầu Tiếng).</li></ul><div class="tip">Chọn loại hồ, rồi bật <b>Tự chạy</b> hoặc kéo thanh <b>Quá trình hình thành</b>.</div>',
       enter: a => a.state.show('mn', 0) },
     { title: 'Hồ móng ngựa', html: '<p><b>Lực tạo thành:</b> ngoại lực – dòng chảy của sông.</p><ol style="padding-left:18px"><li>Ở đồng bằng, sông chảy uốn khúc. Dòng nước xô vào <b>bờ lõm</b> làm bờ bị <b>xói lở</b>; ở <b>bờ lồi</b> nước chảy chậm, phù sa được <b>bồi tụ</b>.</li><li>Khúc uốn ngày càng cong, <b>eo đất</b> giữa hai đoạn sông hẹp dần.</li><li>Mùa lũ, nước <b>phá eo</b>, sông chảy thẳng theo đường ngắn hơn.</li><li>Khúc uốn cũ bị phù sa <b>bịt hai đầu</b>, tách khỏi sông → <b>hồ hình móng ngựa</b>.</li></ol>',
       enter: a => a.state.show('mn', 0, true) },
+    { title: 'Hồ băng hà', html: '<p><b>Lực tạo thành:</b> ngoại lực – hoạt động của <b>băng hà</b>.</p><ol style="padding-left:18px"><li>Thời kì khí hậu lạnh, <b>sông băng</b> trượt chậm xuống thung lũng, mang theo đá vụn <b>bào mòn</b> đáy và sườn: thung lũng chữ V thành chữ U, nhiều chỗ bị <b>khoét sâu</b> thành lòng chảo.</li><li>Đất đá bị băng đẩy, bồi lại ở lưỡi băng thành dải <b>băng tích</b> chắn ngang thung lũng.</li><li>Khí hậu ấm lên, băng <b>tan và lùi</b> dần; nước băng tan, nước mưa đọng lại trong lòng chảo bị băng tích chắn → <b>hồ băng hà</b>.</li></ol><p>VD: <b>Ngũ Hồ</b> (Bắc Mỹ); Phần Lan được gọi là “xứ sở nghìn hồ”.</p>',
+      enter: a => a.state.show('bh', 0, true) },
     { title: 'Hồ kiến tạo', html: '<p><b>Lực tạo thành:</b> nội lực – vận động kiến tạo.</p><ol style="padding-left:18px"><li>Lực <b>kéo tách</b> làm lớp đá bị <b>đứt gãy</b>.</li><li>Khối đá ở giữa các đường đứt gãy <b>sụt xuống</b>, tạo vùng trũng hẹp, dài và sâu (<b>địa hào</b>).</li><li>Nước sông, nước mưa, nước ngầm đổ vào vùng trũng → <b>hồ kiến tạo</b>: thường dài, hẹp và rất sâu.</li></ol><p>VD: hồ <b>Bai-can</b> (Nga) sâu khoảng 1 640 m – sâu nhất thế giới.</p>',
       enter: a => a.state.show('kt', 0, true) },
     { title: 'Hồ núi lửa', html: '<p><b>Lực tạo thành:</b> nội lực – hoạt động núi lửa.</p><ol style="padding-left:18px"><li>Mác-ma từ <b>buồng mác-ma</b> theo ống phun lên, núi lửa <b>phun trào</b>.</li><li>Buồng mác-ma rỗng đi, đỉnh núi mất chỗ dựa và <b>sụp xuống</b> → miệng hố rộng, sâu (hõm chảo).</li><li>Núi lửa ngừng hoạt động, nước mưa và nước ngầm <b>đọng lại</b> trong miệng hố → <b>hồ núi lửa</b> hình tròn, sâu.</li></ol><p>VD: <b>Biển Hồ (hồ T’Nưng)</b> ở Pleiku, Gia Lai là miệng núi lửa cổ.</p>',
       enter: a => a.state.show('nl', 0, true) },
-    { title: 'So sánh và vai trò của hồ', html: '<ul><li>Hồ <b>móng ngựa</b>: nhỏ, nông, hình cong – do <b>ngoại lực</b>.</li><li>Hồ <b>kiến tạo</b>: dài, hẹp, rất sâu – do <b>nội lực</b> (đứt gãy).</li><li>Hồ <b>núi lửa</b>: tròn, sâu, ở đỉnh núi – do <b>nội lực</b> (núi lửa).</li></ul><p><b>Vai trò của hồ:</b> điều hoà dòng chảy sông, cung cấp nước sinh hoạt và tưới tiêu, nuôi trồng thuỷ sản, thuỷ điện, du lịch, điều hoà khí hậu địa phương.</p>',
+    { title: 'Hồ nhân tạo', html: '<p><b>Do con người tạo ra:</b> xây <b>đập</b> chắn ngang dòng sông.</p><ol style="padding-left:18px"><li>Chọn chỗ thung lũng hẹp, xây đập ngăn sông.</li><li>Nước bị giữ lại phía trên đập, <b>dâng lên</b> ngập thung lũng thành <b>hồ chứa</b>.</li><li>Nước qua tua-bin để <b>phát điện</b>, xả xuống hạ du để tưới, cấp nước.</li></ol><p><b>Lợi ích:</b> thuỷ điện, thuỷ lợi, cắt lũ, cấp nước, nuôi thuỷ sản, du lịch. <b>Mặt trái:</b> ngập đất, di dân, giữ phù sa, thay đổi dòng chảy hạ du.</p><p>VD: hồ <b>Hoà Bình</b> (sông Đà), <b>Thác Bà</b> (sông Chảy), <b>Trị An</b> (sông Đồng Nai), <b>Dầu Tiếng</b> (sông Sài Gòn).</p>',
+      enter: a => a.state.show('nt', 0, true) },
+    { title: 'So sánh và vai trò của hồ', html: '<ul><li>Hồ <b>móng ngựa</b>: nhỏ, nông, hình cong – do <b>ngoại lực</b>.</li><li>Hồ <b>kiến tạo</b>: dài, hẹp, rất sâu – do <b>nội lực</b> (đứt gãy).</li><li>Hồ <b>núi lửa</b>: tròn, sâu, ở đỉnh núi – do <b>nội lực</b> (núi lửa).</li><li>Hồ <b>băng hà</b>: nhiều hồ liền nhau ở vùng từng bị băng phủ – do <b>ngoại lực</b> (băng hà).</li><li>Hồ <b>nhân tạo</b>: phía trên đập, hình dạng theo thung lũng – do <b>con người</b>.</li></ul><p><b>Vai trò của hồ:</b> điều hoà dòng chảy sông, cung cấp nước sinh hoạt và tưới tiêu, nuôi trồng thuỷ sản, thuỷ điện, du lịch, điều hoà khí hậu địa phương.</p>',
       enter: a => a.state.show(a.state.type || 'mn', 1) },
   ],
   tasks: [
     { id: 'mn', text: 'Xem hết quá trình hình thành <b>hồ móng ngựa</b> (tới 100%).' },
     { id: 'kt', text: 'Xem hết quá trình hình thành <b>hồ kiến tạo</b>.' },
     { id: 'nl', text: 'Xem hết quá trình hình thành <b>hồ núi lửa</b>.' },
+    { id: 'bh', text: 'Xem hết quá trình hình thành <b>hồ băng hà</b>.' },
+    { id: 'nt', text: 'Xem hết quá trình hình thành <b>hồ nhân tạo</b>.' },
     { id: 'bank', text: 'Bấm vào nhãn <b>bờ lõm</b> và <b>bờ lồi</b> để biết nơi sông xói lở, nơi bồi tụ.' },
   ],
 
@@ -64,10 +73,10 @@ export default {
     scene.add(new THREE.HemisphereLight(0xe0efff, 0x6b5a40, .9));
     const M = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: o.r ?? .9, metalness: 0, side: o.side ?? THREE.FrontSide, transparent: !!o.op, opacity: o.op ?? 1, clippingPlanes: o.clip || null });
     const WATER = 0x2b80d0;
-    const G = { mn: new THREE.Group(), kt: new THREE.Group(), nl: new THREE.Group() }; Object.values(G).forEach(g => scene.add(g));
-    const labelsOf = { mn: [], kt: [], nl: [] };
+    const G = { mn: new THREE.Group(), kt: new THREE.Group(), nl: new THREE.Group(), bh: new THREE.Group(), nt: new THREE.Group() }; Object.values(G).forEach(g => scene.add(g));
+    const labelsOf = { mn: [], kt: [], nl: [], bh: [], nt: [] }; const m4b = new THREE.Matrix4();
     const L = (type, text, pos, opt = {}) => { const l = api.label(text, { pos, parent: G[type], ...opt }); labelsOf[type].push(l); return l; };
-    const tick = { mn: null, kt: null, nl: null };
+    const tick = { mn: null, kt: null, nl: null, bh: null, nt: null };
 
     // =================== 1. HỒ MÓNG NGỰA ===================
     {
@@ -233,8 +242,112 @@ export default {
       };
     }
 
+    // =================== 4. HỒ BĂNG HÀ ===================
+    {
+      const g = G.bh; const X0 = -6.5, X1 = 6.5, Zh = 4.5, NX = 130, NZ = 90;
+      const st = { carve: 0, mor: 0 };
+      const base = (x, z) => { const az = Math.abs(z); const wv = lerp(.25, 1.7, st.carve);
+        let y = 1.0 - .12 * x + 3.1 * ss(az, wv, 4.3) + 2.6 * ss(-x, 3.6, 6.5) * (1 - .3 * ss(az, 2, 4));
+        y -= 1.15 * st.carve * Math.exp(-(((x - .6) ** 2) / 4.2 + (z ** 2) / 1.5));
+        y += .75 * st.mor * Math.exp(-((x - 4.3) ** 2) / .22) * (1 - ss(az, 2.3, 3.4));
+        return y; };
+      const tGeo = new THREE.PlaneGeometry(X1 - X0, Zh * 2, NX, NZ); tGeo.rotateX(-Math.PI / 2);
+      const tP = tGeo.attributes.position; const tC = new Float32Array(tP.count * 3); tGeo.setAttribute('color', new THREE.BufferAttribute(tC, 3));
+      g.add(new THREE.Mesh(tGeo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .95 })));
+      const sk = new THREE.Mesh(new THREE.BufferGeometry(), M(0x6d5c4b)); g.add(sk);
+      const skE = new THREE.Mesh(new THREE.BufferGeometry(), M(0x6d5c4b)); skE.rotation.y = Math.PI / 2; skE.position.x = X1; skE.scale.x = -1; g.add(skE);
+      const gGeo = new THREE.PlaneGeometry(1, 1, 110, 44); gGeo.rotateX(-Math.PI / 2); const gP = gGeo.attributes.position;
+      const glacier = new THREE.Mesh(gGeo, M(0xa9d8f0, { r: .3 })); g.add(glacier);
+      const lake = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), M(0x3f8fc9, { r: .1 })); lake.rotation.x = -Math.PI / 2; g.add(lake);
+      const flowA = [-1.2, 1.2].map(z => { const a = api.arrow(new THREE.Vector3(), new THREE.Vector3(1, 0, 0), 0xffffff, .35, .2); g.add(a); a.userData.z = z; return a; });
+      const meltI = new THREE.InstancedMesh(new THREE.SphereGeometry(.05, 6, 4), new THREE.MeshBasicMaterial({ color: 0xdff4ff }), 40); g.add(meltI); const mk = Array.from({ length: 40 }, () => ({ k: Math.random(), z: (Math.random() - .5) * 2 }));
+      const c = new THREE.Color(); let xt = -6.5, Tm = 0, lastP = -1, lev = 0;
+      const lCarve = L('bh', 'Băng bào mòn, khoét lòng chảo', new THREE.Vector3(.6, 3.2, 0), { cls: 'sm', onClick: { title: 'Băng bào mòn', html: 'Sông băng rất nặng, mang theo đá vụn ở đáy, trượt chậm xuống thung lũng và <b>bào mòn</b> đáy, sườn: thung lũng chữ V thành chữ U, nhiều chỗ bị khoét sâu thành <b>lòng chảo</b>.' } });
+      const lMor = L('bh', 'Băng tích chắn ngang', new THREE.Vector3(4.3, 2.0, 2.2), { cls: 'warm', onClick: { title: 'Băng tích', html: 'Đất đá do băng mang theo bị đẩy, bồi lại ở lưỡi băng tạo thành dải <b>băng tích</b> cao, chắn ngang thung lũng như một con đê tự nhiên.' } });
+      const lMelt = L('bh', 'Khí hậu ấm lên, băng tan, lùi dần', new THREE.Vector3(-2.5, 3.6, 0), { cls: 'sm cold' });
+      const lLake = L('bh', 'Hồ băng hà', new THREE.Vector3(.8, 2.2, 0), { cls: 'big cold' });
+      const lGl = L('bh', 'Sông băng chảy →', new THREE.Vector3(-3.5, 4.2, 0), { cls: 'sm' });
+      tick.bh = (p, dt) => {
+        if (Math.abs(p - lastP) > 1e-4) {
+          lastP = p; st.carve = ss(p, .05, .45); st.mor = ss(p, .15, .5);
+          for (let i = 0; i < tP.count; i++) { const x = tP.getX(i), z = tP.getZ(i); const y = base(x, z); tP.setY(i, y);
+            if (y > 4.2) c.setRGB(.95, .97, 1); else if (y > 2.9) c.setRGB(.55, .53, .5); else c.setRGB(.42, .56, .32).lerp(new THREE.Color(.58, .52, .42), ss(y, 2, 2.9));
+            if (st.mor > .05 && Math.abs(x - 4.3) < .6 && Math.abs(z) < 3) c.lerp(new THREE.Color(.62, .55, .45), .7 * st.mor);
+            tC.set([c.r, c.g, c.b], i * 3); }
+          tP.needsUpdate = true; tGeo.attributes.color.needsUpdate = true; tGeo.computeVertexNormals();
+          // mép trước
+          const pts = []; for (let i = 0; i <= 80; i++) { const x = X0 + i / 80 * (X1 - X0); pts.push(V2(x, base(x, Zh))); }
+          sk.geometry.dispose(); sk.geometry = new THREE.ShapeGeometry(new THREE.Shape([V2(X0, -1), ...pts, V2(X1, -1)])); sk.position.z = Zh;
+          const pe = []; for (let i = 0; i <= 80; i++) { const z = -Zh + i / 80 * Zh * 2; pe.push(V2(z, base(X1, z))); }
+          skE.geometry.dispose(); skE.geometry = new THREE.ShapeGeometry(new THREE.Shape([V2(-Zh, -1), ...pe, V2(Zh, -1)]));
+          // sông băng: tiến tới, rồi lùi khi khí hậu ấm lên
+          xt = p < .45 ? lerp(-3.2, 4.0, ss(p, .02, .3)) : lerp(4.0, -6.6, ss(p, .45, .8));
+          Tm = 1.3 * (p < .45 ? ss(p, .02, .22) : 1 - .55 * ss(p, .45, .8));
+          for (let i = 0; i < gP.count; i++) { const ix = i % 111, iz = Math.floor(i / 111); const x = lerp(X0, 4.4, ix / 110), z = lerp(-2.2, 2.2, iz / 44);
+            const T = Tm * Math.sqrt(clamp((xt - x) / 2.2, 0, 1)) * Math.max(0, 1 - Math.pow(Math.abs(z) / 2.2, 4)); gP.setXYZ(i, x, base(x, z) + (T > .03 ? T : -.3), z); }
+          gP.needsUpdate = true; gGeo.computeVertexNormals(); glacier.visible = p > .02 && xt > X0 + .1;
+          // hồ: nước băng tan, nước mưa đọng trong lòng chảo, bị băng tích chắn lại
+          const fill = ss(p, .74, .98); const bottom = base(.6, 0), crest = base(4.3, 0); lev = lerp(bottom + .03, crest - .1, fill);
+          lake.visible = fill > .01; lake.scale.set(4.2 - (-3.6), 6, 1); lake.position.set((4.2 - 3.6) / 2, lev, 0);
+          flowA.forEach(a => { const x0 = Math.min(xt - 1.6, 2); a.position.set(x0 - 1.2, base(x0, a.userData.z) + Tm + .25, a.userData.z); a.visible = p > .1 && p < .45; });
+          lCarve.visible = p > .15 && p < .5; lMor.visible = p > .35; lMelt.visible = p > .48 && p < .8; lLake.visible = p > .88; lLake.position.y = lev + .8; lGl.visible = p > .05 && p < .45;
+        }
+        const melting = p > .48 && p < .97;
+        for (let i = 0; i < 40; i++) { const d = mk[i]; d.k = (d.k + dt * .25) % 1; const x = lerp(xt, Math.min(xt + 2.5, 3.8), d.k); const s = melting && xt > -6 ? 1 : 0; m4b.makeScale(s, s, s).setPosition(x, Math.max(base(x, d.z), lev) + .06, d.z); meltI.setMatrixAt(i, m4b); }
+        meltI.instanceMatrix.needsUpdate = true;
+      };
+    }
+
+    // =================== 5. HỒ NHÂN TẠO ===================
+    {
+      const g = G.nt; const X0 = -6.5, X1 = 6.5, Zh = 4.5, DAM = 1.6;
+      const rz = x => .35 * Math.sin(x * .7);
+      const floor = x => x < DAM - .3 ? 0 : -.55 * ss(x, DAM - .3, DAM + 1.2);
+      const hT = (x, z) => { const d = Math.abs(z - rz(x)); return floor(x) + .02 * x * 0 + 3.4 * ss(d, .35, 4.2) + .5 * Math.sin(x * .9 + z * .5) * ss(d, 1.5, 4); };
+      const tGeo = new THREE.PlaneGeometry(X1 - X0, Zh * 2, 130, 90); tGeo.rotateX(-Math.PI / 2);
+      const tP = tGeo.attributes.position; const tC = new Float32Array(tP.count * 3); const c = new THREE.Color();
+      for (let i = 0; i < tP.count; i++) { const x = tP.getX(i), z = tP.getZ(i); const y = hT(x, z); tP.setY(i, y); c.setRGB(.42, .58, .3).lerp(new THREE.Color(.33, .47, .25), ss(y, 1, 3)); if (y < .5) c.lerp(new THREE.Color(.62, .66, .4), .6); tC.set([c.r, c.g, c.b], i * 3); }
+      tGeo.setAttribute('color', new THREE.BufferAttribute(tC, 3)); tGeo.computeVertexNormals();
+      g.add(new THREE.Mesh(tGeo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .95 })));
+      { const pts = []; for (let i = 0; i <= 80; i++) { const z = -Zh + i / 80 * Zh * 2; pts.push(V2(z, hT(X1, z))); } const m = new THREE.Mesh(new THREE.ShapeGeometry(new THREE.Shape([V2(-Zh, -1.2), ...pts, V2(Zh, -1.2)])), M(0x6d5c4b)); m.rotation.y = Math.PI / 2; m.position.x = X1; m.scale.x = -1; g.add(m); }
+      { const pts = []; for (let i = 0; i <= 80; i++) { const x = X0 + i / 80 * (X1 - X0); pts.push(V2(x, hT(x, Zh))); } const m = new THREE.Mesh(new THREE.ShapeGeometry(new THREE.Shape([V2(X0, -1.2), ...pts, V2(X1, -1.2)])), M(0x6d5c4b)); m.position.z = Zh; g.add(m); }
+      // rừng trên sườn đồi
+      for (let i = 0; i < 90; i++) { const x = lerp(X0 + .3, X1 - .3, Math.random()), z = (Math.random() - .5) * (Zh * 2 - .5); const y = hT(x, z); if (y < 1.2 || Math.abs(x - DAM) < .6) continue; const t = new THREE.Mesh(new THREE.ConeGeometry(.15, .45, 6), M(0x2e6b34)); t.position.set(x, y + .22, z); g.add(t); }
+      // làng ven sông (sẽ bị ngập khi tích nước)
+      const village = new THREE.Group(); g.add(village);
+      [[-4.6, 1.0], [-3.8, -1.2], [-2.4, 1.3], [-1.3, -1.1], [-4.9, -.9]].forEach(([x, z]) => { const hs = new THREE.Group(); hs.add(new THREE.Mesh(new THREE.BoxGeometry(.38, .26, .32), M(0xf1e3c8))); const r = new THREE.Mesh(new THREE.ConeGeometry(.32, .24, 4), M(0xb5523a)); r.position.y = .24; r.rotation.y = Math.PI / 4; hs.add(r); hs.position.set(x, hT(x, z) + .13, z); village.add(hs); });
+      // mặt nước: sông/hồ phía trên đập và sông phía dưới đập
+      const up = new THREE.Mesh(new THREE.PlaneGeometry(DAM - X0 - .05, Zh * 2 - .1), M(WATER, { r: .12 })); up.rotation.x = -Math.PI / 2; up.position.x = (X0 + DAM) / 2; g.add(up);
+      const down = new THREE.Mesh(new THREE.PlaneGeometry(X1 - DAM - .1, Zh * 2 - .1), M(WATER, { r: .12 })); down.rotation.x = -Math.PI / 2; down.position.set((DAM + X1) / 2 + .05, -.47, 0); g.add(down);
+      // đập, nhà máy thuỷ điện, đường dây
+      const dam = new THREE.Mesh(new THREE.BoxGeometry(.7, 1, 6.4), M(0xbfc3c7, { r: .7 })); dam.position.x = DAM; g.add(dam);
+      const crest = new THREE.Mesh(new THREE.BoxGeometry(.8, .08, 6.4), M(0x8d9399)); g.add(crest);
+      const plant = new THREE.Group(); plant.add(new THREE.Mesh(new THREE.BoxGeometry(.6, .45, 1.2), M(0x6f8aa0))); { const rf = new THREE.Mesh(new THREE.BoxGeometry(.62, .06, 1.22), M(0x3f5466)); rf.position.y = .25; plant.add(rf); }
+      plant.position.set(DAM + .75, -.3, rz(DAM + .75) + .9); g.add(plant);
+      const pylons = new THREE.Group(); g.add(pylons);
+      [[3.2, 2.2], [4.6, 2.9], [6, 3.6]].forEach(([x, z]) => { const p = new THREE.Mesh(new THREE.CylinderGeometry(.03, .07, 1.3, 6), M(0x9aa3ab)); p.position.set(x, hT(x, z) + .65, z); pylons.add(p); const a = new THREE.Mesh(new THREE.BoxGeometry(.5, .04, .04), M(0x9aa3ab)); a.position.set(x, hT(x, z) + 1.25, z); a.rotation.y = -.5; pylons.add(a); });
+      const wire = new THREE.Line(new THREE.BufferGeometry().setFromPoints([[DAM + .75, 0, rz(DAM + .75) + .9], [3.2, 2.2], [4.6, 2.9], [6, 3.6]].map((v, i) => i ? new THREE.Vector3(v[0], hT(v[0], v[1]) + 1.25, v[1]) : new THREE.Vector3(v[0], .05, v[2]))), new THREE.LineBasicMaterial({ color: 0x333a40 })); pylons.add(wire);
+      const outflow = api.flowAlong(new THREE.CatmullRomCurve3([new THREE.Vector3(DAM + .45, -.1, rz(DAM)), new THREE.Vector3(3.5, -.4, rz(3.5)), new THREE.Vector3(6.4, -.42, rz(6.4))]), { count: 22, color: 0xdff4ff, size: .05, speed: .12, parent: g });
+      const upflow = api.flowAlong(new THREE.CatmullRomCurve3([-6.4, -4, -2, 0, DAM + .4].map(x => new THREE.Vector3(x, .1, rz(x)))), { count: 26, color: 0xdff4ff, size: .05, speed: .1, parent: g });
+      const lDam = L('nt', 'Đập ngăn sông', new THREE.Vector3(DAM, 3.2, -2.6), { cls: 'warm', onClick: { title: 'Đập', html: 'Con người xây <b>đập</b> chắn ngang dòng sông ở chỗ thung lũng hẹp. Nước bị giữ lại phía trên đập, dâng lên và lan rộng thành <b>hồ chứa</b>.' } });
+      const lRes = L('nt', 'Hồ chứa (lòng hồ)', new THREE.Vector3(-2.5, 3, 0), { cls: 'big cold', onClick: { title: 'Hồ nhân tạo', html: 'Hồ nhân tạo dùng để <b>phát điện</b>, <b>thuỷ lợi</b> (tưới tiêu), <b>cắt lũ</b> cho hạ du, cấp nước sinh hoạt, nuôi thuỷ sản, giao thông, du lịch.' } });
+      const lVil = L('nt', 'Nhà dân, ruộng đất bị ngập → di dân', new THREE.Vector3(-3.6, 1.5, 1.9), { cls: 'sm warm', onClick: { title: 'Mặt trái của hồ nhân tạo', html: 'Lòng hồ làm <b>ngập</b> làng mạc, đất canh tác, rừng → phải <b>di dân, tái định cư</b>. Đập còn giữ lại phù sa, làm thay đổi dòng chảy và hệ sinh thái ở hạ du.' } });
+      const lPow = L('nt', 'Nhà máy thuỷ điện', new THREE.Vector3(DAM + 1.2, .9, rz(DAM) + 1.6), { cls: 'sm', onClick: { title: 'Thuỷ điện', html: 'Nước từ hồ chảy qua đường ống làm quay <b>tua-bin</b> phát điện, rồi trả lại dòng sông phía dưới đập.' } });
+      let lastP = -1;
+      tick.nt = p => {
+        if (Math.abs(p - lastP) < 1e-4) return; lastP = p;
+        const build = ss(p, .22, .5), fill = ss(p, .52, .95);
+        const dh = lerp(.05, 3.0, build); dam.scale.y = dh; dam.position.y = dh / 2 - .5; dam.visible = build > .01; crest.position.set(DAM, dh - .5 + .04, 0); crest.visible = build > .9;
+        const lev = lerp(.08, 2.45, fill); up.position.y = lev;
+        village.children.forEach(hs => (hs.visible = hs.position.y + .1 > lev));
+        plant.visible = pylons.visible = build > .95; outflow.visible = p < .22 || fill > .15; upflow.visible = fill < .05;
+        lDam.visible = build > .3; lRes.visible = fill > .6; lRes.position.y = lev + .8; lVil.visible = fill > .2 && fill < .75; lPow.visible = build > .95;
+      };
+      L('nt', 'Hướng dòng chảy →', new THREE.Vector3(-5.6, .9, rz(-5.6) - .8), { cls: 'sm' });
+    }
+
     // =================== điều khiển chung ===================
-    const VIEW = { mn: [[0, 10.5, 11], [0, 0, -.6]], kt: [[5, 6, 13], [0, -1.2, 0]], nl: [[3.5, 5.5, 13], [0, 1.2, 0]] };
+    const VIEW = { mn: [[0, 10.5, 11], [0, 0, -.6]], kt: [[5, 6, 13], [0, -1.2, 0]], nl: [[3.5, 5.5, 13], [0, 1.2, 0]], bh: [[12.5, 8.5, 6.5], [-.5, 1.2, 0]], nt: [[10.5, 7, 7.5], [-1, .8, 0]] };
     state.type = 'mn'; state.p = 0; state.play = false; let lastT = 0, syncing = false;
     const setP = v => { syncing = true; api.set('p', Math.round(v * 100)); syncing = false; };
     function render(dt = 0) {
@@ -243,7 +356,9 @@ export default {
       const T = TYPES[state.type];
       const stage = state.type === 'mn' ? (state.p < .62 ? 'Sông uốn khúc: xói lở bờ lõm, bồi tụ bờ lồi' : state.p < .72 ? 'Mùa lũ: nước phá eo đất' : 'Khúc uốn cũ bị bịt hai đầu → hồ')
         : state.type === 'kt' ? (state.p < .08 ? 'Lớp đá chịu lực kéo tách' : state.p < .62 ? 'Đứt gãy, khối giữa sụt xuống' : 'Nước đổ vào vùng trũng → hồ')
-          : (state.p < .2 ? 'Mác-ma dâng lên theo ống phun' : state.p < .46 ? 'Núi lửa phun trào' : state.p < .68 ? 'Buồng mác-ma rỗng, đỉnh núi sụp' : 'Nước mưa đọng trong miệng hố → hồ');
+          : state.type === 'nl' ? (state.p < .2 ? 'Mác-ma dâng lên theo ống phun' : state.p < .46 ? 'Núi lửa phun trào' : state.p < .68 ? 'Buồng mác-ma rỗng, đỉnh núi sụp' : 'Nước mưa đọng trong miệng hố → hồ')
+            : state.type === 'bh' ? (state.p < .45 ? 'Sông băng chảy, bào mòn khoét lòng chảo, đẩy đất đá thành băng tích' : state.p < .76 ? 'Khí hậu ấm lên, sông băng tan và lùi dần' : 'Nước đọng trong lòng chảo, bị băng tích chắn → hồ')
+              : (state.p < .22 ? 'Sông chảy tự nhiên trong thung lũng' : state.p < .52 ? 'Con người xây đập chắn ngang sông' : 'Nước dâng sau đập, ngập thung lũng → hồ chứa');
       api.readout(`<b>${T.name}</b> · ${Math.round(state.p * 100)}%<div style="margin-top:4px">Lực tạo thành: <b>${T.force}</b></div><div style="margin-top:4px;color:#bfe6ff">▸ ${stage}</div><div style="margin-top:6px;font-size:12px;opacity:.85">VD: ${T.ex}</div>`);
       if (state.p >= .97) api.done(state.type);
     }
@@ -253,7 +368,7 @@ export default {
     };
     api.onTick((dt, t) => { lastT = t; if (state.play) { state.p = Math.min(1, state.p + dt * .055); setP(state.p); if (state.p >= 1) { state.play = false; api.set('play', false); } } render(dt); });
     api.heading('Loại hồ');
-    api.choice('type', '', [{ v: 'mn', t: 'Hồ móng ngựa' }, { v: 'kt', t: 'Hồ kiến tạo' }, { v: 'nl', t: 'Hồ núi lửa' }], 'mn', v => { if (v !== state.type) { state.type = v; state.p = 0; setP(0); state.play = true; api.set('play', true); api.fly(...VIEW[v]); } });
+    api.choice('type', '', [{ v: 'mn', t: 'Hồ móng ngựa' }, { v: 'bh', t: 'Hồ băng hà' }, { v: 'kt', t: 'Hồ kiến tạo' }, { v: 'nl', t: 'Hồ núi lửa' }, { v: 'nt', t: 'Hồ nhân tạo' }], 'mn', v => { if (v !== state.type) { state.type = v; state.p = 0; setP(0); state.play = true; api.set('play', true); api.fly(...VIEW[v]); } });
     api.heading('Quá trình hình thành');
     api.slider('p', 'Tiến trình', { min: 0, max: 100, value: 0, format: v => v + '%' }, v => { if (!syncing) state.p = v / 100; });
     api.toggle('play', 'Tự chạy quá trình', false, v => { state.play = v; if (v && state.p >= 1) state.p = 0; });
