@@ -101,6 +101,7 @@ function paintShell(u) {
     <div class="main">
       <header class="top"><button class="icon-btn menu-btn" data-act="menu" aria-label="Mở menu">${ic('menu')}</button>
         <div class="crumb"><small>${esc(group || (c ? c.name : ''))}</small><h1>${esc(title)}</h1></div>
+        ${u.role === 'gv' ? `<div class="grade-sw" role="group" aria-label="Chuyển khối lớp">${[10, 11, 12].map(g => `<button type="button" data-act="grade" data-g="${g}" class="${(c?.grade || 10) === g && c ? 'on' : ''}" aria-pressed="${(c?.grade || 10) === g && !!c}" data-tip="${g === 10 ? 'Địa lí đại cương' : g === 11 ? 'Địa lí KT-XH thế giới' : 'Địa lí Việt Nam'}">Khối ${g}</button>`).join('')}</div>` : ''}
         ${D.MODE === 'demo' ? `<span class="demo-chip" data-tip="Dữ liệu lưu trong trình duyệt này. Khi nối máy chủ, dữ liệu dùng chung cho cả lớp.">${ic('info')}<span>Bản chạy thử</span></span>` : ''}
         <button class="icon-btn" data-act="board" aria-label="Bảng tin">${ic('bell')}<span class="dot" data-badge="bell" hidden></span></button>
       </header>
@@ -117,14 +118,28 @@ function paintShell(u) {
     if (k === 'theme') { const dark = document.documentElement.dataset.theme === 'dark' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches); const t = dark ? 'light' : 'dark'; store.set('aida2-theme', t); applyTheme(t); a.innerHTML = ic(t === 'dark' ? 'sun' : 'moon'); }
     if (k === 'board') ctx.go(u.role === 'gv' ? 'gv-bang-tin' : 'hs-bang-tin');
     if (k === 'classes') classPicker(u);
+    if (k === 'grade') gradeSwitch(u, +a.dataset.g);
   });
   const topEl = $('.top'); const onScroll = () => topEl.classList.toggle('scrolled', scrollY > 4); addEventListener('scroll', onScroll, { passive: true });
 }
 
-async function classPicker(u) {
+// Chuyển khối 10 / 11 / 12: mở lớp thuộc khối đó (chọn nếu có nhiều lớp, gợi ý tạo lớp nếu chưa có)
+async function gradeSwitch(u, g) {
+  const cur0 = D.cls(); if (cur0 && (cur0.grade || 10) === g) return;
+  const list = D.myClasses().filter(c => (c.grade || 10) === g);
+  if (list.length === 1) { await D.switchClass(list[0].id); render(); const { toast } = await import('./core/util.js'); toast(`Đã chuyển sang khối ${g} · ${list[0].name}`, 'check'); return; }
+  if (list.length > 1) { classPicker(u, g); return; }
   const { modal } = await import('./core/util.js');
-  const list = D.myClasses();
-  const m = modal({ title: 'Lớp của bạn', body: `<div class="list">${list.map(c => `<button class="li" style="width:100%;background:none;border:0;border-bottom:1px solid var(--line);text-align:left" data-cid="${c.id}"><span class="ic">${ic('users')}</span><span class="t"><b>${esc(c.name)}</b><span>Mã lớp ${esc(c.code)} · ${c.members.length} học sinh</span></span>${D.cls()?.id === c.id ? '<span class="pill p-good">Đang mở</span>' : ''}</button>`).join('')}</div>`,
+  const m = modal({ title: `Khối ${g}`, body: `<p class="muted" style="margin:0">Thầy/cô chưa có lớp nào thuộc <b>khối ${g}</b>. Tạo một lớp khối ${g} để dùng các mô-đun, bài giảng và bài kiểm tra của khối này.</p>`,
+    foot: `<button class="btn" data-x>Để sau</button><button class="btn pri" data-new>${ic('plus')} Tạo lớp khối ${g}</button>` });
+  m.el.querySelector('[data-x]').onclick = () => m.close();
+  m.el.querySelector('[data-new]').onclick = () => { m.close(); ctx.go('bat-dau', { add: true, grade: g }); };
+}
+
+async function classPicker(u, g) {
+  const { modal } = await import('./core/util.js');
+  const list = D.myClasses().filter(c => !g || (c.grade || 10) === g);
+  const m = modal({ title: g ? `Chọn lớp khối ${g}` : 'Lớp của bạn', body: `<div class="list">${list.map(c => `<button class="li" style="width:100%;background:none;border:0;border-bottom:1px solid var(--line);text-align:left" data-cid="${c.id}"><span class="ic">${ic('users')}</span><span class="t"><b>${esc(c.name)}</b><span>Khối ${c.grade || 10} · Mã lớp ${esc(c.code)} · ${c.members.length} học sinh</span></span>${D.cls()?.id === c.id ? '<span class="pill p-good">Đang mở</span>' : ''}</button>`).join('')}</div>`,
     foot: u.role === 'gv' ? `<button class="btn pri" data-new>${ic('plus')} Tạo lớp mới</button>` : `<button class="btn pri" data-join>${ic('key')} Vào lớp bằng mã</button>` });
   m.el.querySelectorAll('[data-cid]').forEach(b => (b.onclick = async () => { await D.switchClass(b.dataset.cid); m.close(); render(); }));
   m.el.querySelector('[data-new],[data-join]')?.addEventListener('click', () => { m.close(); ctx.go('bat-dau', { add: true }); });

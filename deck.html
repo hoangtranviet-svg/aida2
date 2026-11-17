@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="deck/deck.css?v=20261118b">
+<link rel="stylesheet" href="deck/deck.css?v=20261118c">
 </head>
 <body>
 <div id="app">
@@ -34,7 +34,7 @@
   </footer>
 </div>
 <script type="module">
-  import { runDeck } from './deck/deck.js?v=20261118b';
+  import { runDeck } from './deck/deck.js?v=20261118c';
   const q = new URLSearchParams(location.search);
   const id = (q.get('d') || location.hash.replace('#', '').split('/')[0] || '').replace(/[^0-9a-z-]/gi, '');
   runDeck(id || '11-11');

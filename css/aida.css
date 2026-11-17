@@ -529,3 +529,10 @@ details[open]>summary::before{content:"▾ "}
 .mod-stat{border:0;background:none;padding:0;font:inherit;font-size:12.5px;color:var(--ocean);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;cursor:pointer}
 .mod-stat:hover{text-decoration-style:solid}
 .study.solo{grid-template-columns:minmax(0,1fr)}
+
+/* chuyển khối 10 / 11 / 12 trên thanh công cụ */
+.grade-sw{display:inline-flex;padding:3px;border-radius:999px;background:var(--surface);border:1px solid var(--line);gap:2px;flex:none}
+.grade-sw button{border:0;background:none;font:600 13px var(--body);color:var(--muted);padding:6px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.grade-sw button:hover{color:var(--ink)}
+.grade-sw button.on{background:var(--ocean);color:var(--on-ocean)}
+@media (max-width:640px){.grade-sw button{padding:6px 8px;font-size:12px}}

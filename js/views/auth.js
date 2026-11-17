@@ -104,6 +104,7 @@ const start = {
         try { await D.createSampleClass(k => { $('#sp i').style.width = Math.round(k * 100) + '%'; }); toast('Đã tạo Lớp 10KHXH5 với dữ liệu mẫu', 'check'); location.hash = 'gv-tong-quan'; }
         catch (e) { $('#serr').textContent = e.message; b.disabled = false; b.textContent = 'Thử lại'; }
       });
+      if ([10, 11, 12].includes(+params?.grade)) { $('#g').value = String(params.grade); $('#n').placeholder = 'VD: ' + params.grade + 'A1'; }
       $('#ok').onclick = async () => { const n = $('#n').value.trim(); if (n.length < 2) { $('#err').textContent = 'Nhập tên lớp.'; return; } const c = await D.createClass({ name: n, grade: +$('#g').value, year: $('#y').value }); toast(`Đã tạo ${c.name} – mã lớp ${c.code}`, 'check'); location.hash = 'gv-lop'; };
     } else {
       el.innerHTML = `<div class="card" style="max-width:520px;margin:24px auto"><div class="stack" style="gap:14px">
