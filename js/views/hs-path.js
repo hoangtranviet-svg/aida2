@@ -1,5 +1,6 @@
 // HS · Lộ trình mô-đun
 import * as D from '../core/data.js';
+import { GRADES } from '../core/qbank.js';
 import { esc, dueChip } from '../core/util.js';
 import { ic } from '../core/icons.js';
 import { progress } from '../core/insight.js';
@@ -10,7 +11,8 @@ export default {
   onData: why => ['module', 'attempt'].includes(why.type),
   render(el, ctx) {
     const c = D.cls(); const P = progress(c, D.me().uid); const chaps = [...new Set(P.mods.map(m => m.chap))];
-    el.innerHTML = `<div class="lead"><p>${P.mods.length} mô-đun 3D của phần 1 – 3 sách Địa lí 10. Mô-đun mở theo lịch học của thầy/cô. Mỗi mô-đun: khám phá mô hình (40%) và luyện tập (60%).</p>
+    const g = [11, 12].includes(+c.grade) ? +c.grade : 10;
+    el.innerHTML = `<div class="lead"><p>${P.mods.length} bài của chương trình Địa lí ${g} (${GRADES[g].sub.toLowerCase()}). Bài mở theo lịch học của thầy/cô. Bài có học liệu số (mô hình 3D hoặc bài giảng trên web) thì em mở ra để học và làm câu hỏi nhanh.</p>
       <div class="row"><span class="pill p-open">${P.mods.filter(m => m.st.state === 'open').length} đang mở</span><span class="pill p-good">${P.nDone} đã hoàn thành</span></div></div>
       ${chaps.map(ch => `<div class="chap-h"><h2>${esc(ch.split(' – ')[1] || ch)}</h2><span>${esc(ch.split(' – ')[0])}</span></div><div class="mods">${P.mods.filter(m => m.chap === ch).map(m => { const can = m.st.state !== 'locked';
         return `<${can ? 'button type="button"' : 'div'} class="mod ${can ? 'can' : 'locked'}" ${can ? `data-code="${m.code}"` : ''} style="text-align:left;${can ? 'cursor:pointer' : ''}">

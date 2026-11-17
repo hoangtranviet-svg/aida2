@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bài giảng – AIDA 2.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="deck/deck.css?v=20261117b">
+</head>
+<body>
+<div id="app">
+  <header id="bar">
+    <a class="back" href="./" onclick="if(history.length>1){history.back();return false}">← Quay lại</a>
+    <span class="code">…</span>
+    <h1>Đang tải…</h1>
+    <button class="btn" id="mode" type="button" title="Đổi giữa trình chiếu trên lớp và tự học">Chế độ: Tự học</button>
+    <button class="btn" id="notesBtn" type="button" title="Ghi chú cho giáo viên (phím N)" hidden>Ghi chú</button>
+    <button class="btn" id="fullBtn" type="button" title="Toàn màn hình (phím F)">⛶</button>
+  </header>
+  <main id="stage">
+    <div id="prog"></div>
+    <div id="loading">Đang tải bài giảng…</div>
+    <div id="scaler"></div>
+    <div id="notes"></div>
+    <div id="toast"></div>
+  </main>
+  <footer id="nav">
+    <button class="btn" id="prev" type="button" aria-label="Trang trước">←</button>
+    <div id="dots"></div>
+    <span id="count"></span>
+    <button class="btn" id="next" type="button" aria-label="Trang sau">→</button>
+  </footer>
+</div>
+<script type="module">
+  import { runDeck } from './deck/deck.js?v=20261117b';
+  const q = new URLSearchParams(location.search);
+  const id = (q.get('d') || location.hash.replace('#', '').split('/')[0] || '').replace(/[^0-9a-z-]/gi, '');
+  runDeck(id || '11-11');
+</script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 import * as D from '../core/data.js';
 import { esc, dd, toast, modal, DAY } from '../core/util.js';
 import { ic } from '../core/icons.js';
-import { MODULES } from '../core/qbank.js';
+import { modsOf, matOf } from '../core/qbank.js';
 import { progress } from '../core/insight.js';
 import { statePill, modIcon } from './parts.js';
 import { moduleDetail } from './module-detail.js?v=1';
@@ -13,7 +13,7 @@ export default {
   title: 'Mô-đun & lịch mở',
   onData: why => ['module', 'storage'].includes(why.type) || (why.type === 'attempt'),
   render(el, ctx) {
-    const c = D.cls(); const S = D.students(c); const now = Date.now();
+    const c = D.cls(); const S = D.students(c); const now = Date.now(); const MODULES = modsOf(c.grade);
     const live = code => new Set([...c.events, ...c.attempts].filter(x => x.m === code && now - x.ts < 10 * 6e4).map(x => x.s)).size;
     const chaps = [...new Set(MODULES.map(m => m.chap))];
     const counts = { open: 0, review: 0, locked: 0 }; MODULES.forEach(m => counts[c.modules[m.code]?.state || 'locked']++);
@@ -25,7 +25,7 @@ export default {
           <div class="t" style="min-width:220px"><b>${m.bai}: ${esc(m.title)}</b><span class="mono">${m.code}</span> <span style="font-size:12.5px;color:var(--muted)">· <button type="button" class="mod-stat" data-detail="${m.code}" data-tip="Xem học sinh đã làm gì, học bao lâu, sai ở đâu">${fin}/${S.length} hoàn thành</button>${lv ? ` · <b style="color:var(--land)">${lv} đang học</b>` : ''}</span></div>
           <div class="row" style="gap:8px">${md.state !== 'locked' ? `<label class="row" style="gap:6px;font-size:12.5px;color:var(--muted)">Hạn <input class="inp sm" type="datetime-local" data-due="${m.code}" value="${md.due ? toLocal(md.due) : ''}" style="width:auto"></label>` : ''}
             <div class="seg" data-code="${m.code}">${['locked', 'open', 'review'].map(s => `<button type="button" data-v="${s}" class="${md.state === s ? 'on' : ''}">${{ locked: 'Khoá', open: 'Mở', review: 'Ôn tập' }[s]}</button>`).join('')}</div>
-            <button class="btn sm ghost" data-detail="${m.code}" data-tip="Dữ liệu học tập của học sinh">${ic('chart')}</button><button class="btn sm ghost" data-view="${m.lab}" data-tip="Xem mô hình 3D">${ic('eye')}</button></div></div>`; }).join('')}</div></div>`).join('')}`;
+            <button class="btn sm ghost" data-detail="${m.code}" data-tip="Dữ liệu học tập của học sinh">${ic('chart')}</button>${matOf(m) ? `<button class="btn sm ghost" data-view="${matOf(m).url}" data-tip="Xem trước ${matOf(m).name}">${ic('eye')}</button>${m.deck ? `<a class="btn sm ghost" href="deck.html?mode=present#${m.deck}" target="_blank" rel="noopener" data-tip="Trình chiếu toàn màn hình trên lớp">${ic('slides')}</a>` : ''}` : `<span class="pill p-lock plain" data-tip="Bài này chưa có học liệu số">Chưa có học liệu</span>`}${m.tt17 ? `<span class="pill p-warn plain" data-tip="${esc(m.tt17)}">TT 17/2025</span>` : ''}</div></div>`; }).join('')}</div></div>`).join('')}`;
     el.querySelectorAll('.seg[data-code]').forEach(sg => sg.querySelectorAll('button').forEach(b => (b.onclick = () => {
       const code = sg.dataset.code, v = b.dataset.v; const md = c.modules[code] || {};
       const patch = { state: v }; if (v === 'open' && !md.due) patch.due = new Date(new Date(now + 3 * DAY).setHours(21, 0, 0, 0)).getTime();
@@ -34,6 +34,6 @@ export default {
     })));
     el.querySelectorAll('[data-due]').forEach(i => (i.onchange = () => { const t = new Date(i.value).getTime(); if (!isNaN(t)) { D.act.setModule(i.dataset.due, { due: t }); toast('Đã đặt hạn ' + dd(t), 'clock'); } }));
     el.querySelectorAll('[data-detail]').forEach(b => (b.onclick = () => moduleDetail(c, b.dataset.detail)));
-    el.querySelectorAll('[data-view]').forEach(b => (b.onclick = () => modal({ title: 'Xem trước mô hình', wide: true, body: `<iframe src="lab.html#${b.dataset.view}" style="width:100%;height:70vh;border:0;border-radius:12px;background:#0b1320" title="Mô hình 3D"></iframe>` })));
+    el.querySelectorAll('[data-view]').forEach(b => (b.onclick = () => modal({ title: 'Xem trước mô hình', wide: true, body: `<iframe src="${b.dataset.view}" style="width:100%;height:70vh;border:0;border-radius:12px;background:#0b1320" title="Xem trước học liệu" allow="fullscreen"></iframe>` })));
   },
 };

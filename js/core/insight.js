@@ -1,5 +1,5 @@
 // Phân tích: kết quả kiểm tra, độ khó/độ phân biệt, tiến trình học, việc cần làm, nhận xét theo TT 22
-import { allQ, qOf, MODULES, MOD, ERR, OBJ, gradeItem } from './qbank.js';
+import { allQ, qOf, modsOf, MOD, ERR, OBJ, gradeItem } from './qbank.js';
 import { students } from './data.js';
 import { studentSummary, STRATEGIES } from '../../app/analytics.js';
 import { avg, DAY } from './util.js';
@@ -66,11 +66,11 @@ export function moduleProgress(c, sid, code) {
   const explore = complete ? 1 : Math.min(1, steps / 5);
   const qs = allQ(c).filter(q => q.m === code && q.t === 'mc'); const okSet = new Set(at.filter(a => a.correct).map(a => a.q));
   const practice = qs.length ? okSet.size / qs.length : 0;
-  const pct = .4 * explore + .6 * practice;
+  const pct = qs.length ? .4 * explore + .6 * practice : explore; // bài chưa có câu luyện tập: tính theo phần khám phá học liệu
   return { code, explore, practice, pct, steps, nq: qs.length, nok: okSet.size, started: ev.length + at.length > 0, done: pct >= .8, last: Math.max(0, ...ev.map(e => e.ts), ...at.map(a => a.ts)) };
 }
 export function progress(c, sid) {
-  const mods = MODULES.map(m => ({ ...m, st: c.modules[m.code] || { state: 'locked' }, pr: moduleProgress(c, sid, m.code) }));
+  const mods = modsOf(c.grade).map(m => ({ ...m, st: c.modules[m.code] || { state: 'locked' }, pr: moduleProgress(c, sid, m.code) }));
   const avail = mods.filter(m => m.st.state !== 'locked');
   return { mods, avail, pctAvail: avail.length ? avg(avail.map(m => m.pr.pct)) : 0, pctYear: avg(mods.map(m => m.pr.pct)), nDone: mods.filter(m => m.pr.done).length };
 }

@@ -92,7 +92,7 @@ const start = {
       el.innerHTML = `<div class="card" style="max-width:560px;margin:24px auto"><div class="stack" style="gap:14px">
         <span class="eyebrow">Bước 1</span><h2>Tạo lớp học</h2><p class="muted">Sau khi tạo, hệ thống cấp một mã lớp 6 kí tự để học sinh tự đăng kí vào lớp.</p>
         <label class="field"><span>Tên lớp</span><input class="inp" id="n" placeholder="Lớp 10A2"></label>
-        <div class="row"><label class="field" style="flex:1"><span>Khối</span><select class="inp" id="g"><option>10</option><option>11</option><option>12</option><option>6</option><option>7</option><option>8</option><option>9</option></select></label>
+        <div class="row"><label class="field" style="flex:1"><span>Khối</span><select class="inp" id="g"><option value="10">Lớp 10 – Địa lí đại cương</option><option value="11">Lớp 11 – Địa lí KT-XH thế giới</option><option value="12">Lớp 12 – Địa lí Việt Nam</option></select></label>
         <label class="field" style="flex:1"><span>Năm học</span><input class="inp" id="y" value="2026–2027"></label></div>
         <div class="err-msg" id="err"></div><button class="btn pri lg" id="ok">${ic('plus')} Tạo lớp</button></div></div>
         ${D.myClasses().some(c => c.sample) ? '' : `<div class="card" style="max-width:560px;margin:0 auto 24px"><div class="stack" style="gap:10px"><span class="eyebrow">Dùng thử với dữ liệu mẫu</span><h3>Lớp mẫu 10KHXH5</h3>

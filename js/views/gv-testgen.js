@@ -2,19 +2,19 @@
 import * as D from '../core/data.js';
 import { $, esc, n2, toast, modal, uid, saveFile, DAY } from '../core/util.js';
 import { ic } from '../core/icons.js';
-import { MODULES, MOD, TEMPLATES, TYPE_NAME, LEVEL_NAME, generate, matrix, makeVariants, qOf, allQ, total } from '../core/qbank.js';
+import { modsOf, MOD, TEMPLATES, TYPE_NAME, LEVEL_NAME, generate, matrix, makeVariants, qOf, allQ, total } from '../core/qbank.js';
 import { testDocx } from '../core/testdoc.js';
 import { lvChip, objChip, qHTML } from './parts.js';
 
 let S = null; // trạng thái soạn đề (giữ khi chuyển trang)
-const fresh = c => ({ title: 'Kiểm tra giữa học kì I', cat: 'gk', template: 'kt45', modules: MODULES.filter(m => c.modules[m.code]?.state !== 'locked').map(m => m.code), lv: { B: 40, H: 30, V: 30 }, nv: 4, kind: 'paper', result: null, seed: 1 });
+const fresh = c => ({ title: 'Kiểm tra giữa học kì I', cat: 'gk', template: 'kt45', modules: modsOf(c.grade).filter(m => c.modules[m.code]?.state !== 'locked').map(m => m.code), lv: { B: 40, H: 30, V: 30 }, nv: 4, kind: 'paper', result: null, seed: 1 });
 const toLocal = ts => new Date(ts - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 16);
 
 export default {
   title: 'Tạo đề tự động',
   onData: () => false,
   render(el, ctx) {
-    const c = D.cls(); S ||= fresh(c); if (!S.modules.length) S.modules = MODULES.slice(0, 8).map(m => m.code);
+    const c = D.cls(); const MODULES = modsOf(c.grade); if (S && S.grade !== (c.grade || 10)) S = null; S ||= { ...fresh(c), grade: c.grade || 10 }; if (!S.modules.length) S.modules = MODULES.slice(0, 8).map(m => m.code);
     const T = TEMPLATES[S.template]; const chaps = [...new Set(MODULES.map(m => m.chap))];
     el.innerHTML = `<div class="lead"><p>Chọn phạm vi và tỉ lệ mức độ; hệ thống lập ma trận, chọn câu trải đều các mục tiêu, trộn mã đề và xuất Word kèm đáp án, ma trận, bản đặc tả.</p></div>
     <div class="grid" style="grid-template-columns:minmax(0,380px) minmax(0,1fr);align-items:start" id="gg">

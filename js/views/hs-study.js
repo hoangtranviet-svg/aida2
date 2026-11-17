@@ -2,7 +2,7 @@
 import * as D from '../core/data.js';
 import { $, esc, toast } from '../core/util.js';
 import { ic } from '../core/icons.js';
-import { allQ, MOD, ERR, OBJ } from '../core/qbank.js';
+import { allQ, MOD, ERR, OBJ, matOf } from '../core/qbank.js';
 import { moduleProgress } from '../core/insight.js';
 import { statePill, objChip, L } from './parts.js';
 
@@ -17,17 +17,17 @@ export default {
     if (!m) { ctx.go('hs-lo-trinh'); return; }
     const st = c.modules[code]?.state || 'locked';
     if (st === 'locked' && !p.o) { el.innerHTML = `<div class="empty">${ic('lock')}<b>Mô-đun đang khoá</b><span>Thầy/cô sẽ mở mô-đun này theo lịch học.</span><a class="btn" href="#hs-lo-trinh">Về lộ trình</a></div>`; return; }
-    const pool = allQ(c).filter(q => q.t === 'mc' && (p.o ? q.o === p.o : q.m === code));
+    const pool = allQ(c).filter(q => q.t === 'mc' && (p.o ? q.o === p.o : q.m === code)); const mat = matOf(m);
     el.innerHTML = `<div class="row" style="margin-bottom:12px"><button class="btn ghost sm" id="back">${ic('arrowL')} ${p.o ? 'Việc cần làm' : 'Lộ trình'}</button>${statePill(st)}<span class="mono muted" style="font-size:12px">${code}</span>
-      ${p.o ? `${objChip(p.o)}<span class="muted" style="font-size:12.5px">${esc((OBJ[p.o] || '').slice(0, 90))}…</span>` : ''}<span class="sp"></span><a class="btn sm" href="lab.html#${m.lab}" target="_blank" rel="noopener">${ic('arrowR')} Mở mô hình toàn màn hình</a></div>
-      <div class="study"><div><iframe id="lab" title="Mô hình 3D ${esc(m.title)}" src="lab.html#${m.lab}" allow="fullscreen"></iframe>
-        <p class="muted" style="font-size:12.5px;margin:8px 2px">Các bước em khám phá và câu trả lời được ghi lại để gợi ý cách học phù hợp với em.</p></div>
-        <div class="card qpanel" id="quiz"></div></div>`;
+      ${p.o ? `${objChip(p.o)}<span class="muted" style="font-size:12.5px">${esc((OBJ[p.o] || '').slice(0, 90))}…</span>` : ''}<span class="sp"></span>${mat ? `<a class="btn sm" href="${mat.url}" target="_blank" rel="noopener">${ic('arrowR')} Mở ${mat.name} toàn màn hình</a>` : ''}</div>
+      <div class="study${pool.length ? '' : ' solo'}"><div>${mat ? `<iframe id="lab" title="${esc(mat.name)} ${esc(m.title)}" src="${mat.url}" allow="fullscreen"></iframe>
+        <p class="muted" style="font-size:12.5px;margin:8px 2px">${mat.kind === 'deck' ? 'Các trang em đã xem và câu trả lời nhanh' : 'Các bước em khám phá và câu trả lời'} được ghi lại để gợi ý cách học phù hợp với em.</p>` : `<div class="empty">${ic('book')}<b>Bài này chưa có học liệu số</b><span>Em học theo SGK và hướng dẫn của thầy/cô trên lớp.</span></div>`}</div>
+        ${pool.length || p.o ? '<div class="card qpanel" id="quiz"></div>' : ''}</div>`;
     $('#back').onclick = () => ctx.go(p.o ? 'hs-viec-can-lam' : 'hs-lo-trinh');
     D.act.logEvent({ m: code, type: 'module_open', payload: { from: p.o ? 'remedy' : 'path' } });
     const onMsg = e => { const d = e.data; if (!d || d.source !== 'aida-lab') return; D.act.logEvent({ m: d.module || code, type: d.type, payload: d.payload || {}, ts: d.ts || Date.now() }); };
     addEventListener('message', onMsg);
-    quiz($('#quiz'), pool, { title: p.o ? 'Luyện tập cải thiện' : 'Luyện tập', code, remedy: !!p.o, onStep: s => $('#lab')?.contentWindow?.postMessage({ aida: 'goStep', step: s }, '*') });
+    if ($('#quiz')) quiz($('#quiz'), pool, { title: p.o ? 'Luyện tập cải thiện' : 'Luyện tập', code, remedy: !!p.o, onStep: s => $('#lab')?.contentWindow?.postMessage({ aida: 'goStep', step: s }, '*') });
     return () => removeEventListener('message', onMsg);
   },
 };
