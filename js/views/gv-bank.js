@@ -2,7 +2,7 @@
 import * as D from '../core/data.js';
 import { $, esc, toast, modal, uid, saveFile } from '../core/util.js';
 import { ic } from '../core/icons.js';
-import { allQ, MODULES, MOD, TYPE_NAME, LEVEL_NAME, OBJ, ERR } from '../core/qbank.js';
+import { allQ, modsOf, MOD, TYPE_NAME, LEVEL_NAME, OBJ, ERR } from '../core/qbank.js';
 import { qHTML, lvChip, objChip, confirmInline } from './parts.js';
 import { buildXlsx, toBlob } from '../lib/office.js';
 
@@ -19,7 +19,7 @@ export default {
     <div class="tbl-wrap" style="margin-bottom:16px"><table class="tbl"><thead><tr><th>Dạng câu</th>${['B', 'H', 'V'].map(l => `<th class="r">${LEVEL_NAME[l]}</th>`).join('')}<th class="r">Tổng</th></tr></thead>
       <tbody>${Object.keys(TYPE_NAME).map(t => `<tr><td>${TYPE_NAME[t]}</td>${['B', 'H', 'V'].map(l => `<td class="r num">${count(t, l)}</td>`).join('')}<td class="r num"><b>${count(t)}</b></td></tr>`).join('')}</tbody></table></div>
     <div class="toolbar"><div class="search">${ic('search')}<input class="inp" id="fq" placeholder="Tìm theo nội dung hoặc mã mục tiêu" value="${esc(F.q)}"></div>
-      <select class="inp" id="fm"><option value="">Mọi bài</option>${MODULES.map(m => `<option value="${m.code}" ${F.m === m.code ? 'selected' : ''}>${m.bai} – ${esc(m.title)}</option>`).join('')}</select>
+      <select class="inp" id="fm"><option value="">Mọi bài</option>${modsOf(D.cls()?.grade).map(m => `<option value="${m.code}" ${F.m === m.code ? 'selected' : ''}>${m.bai} – ${esc(m.title)}</option>`).join('')}</select>
       <select class="inp" id="ft"><option value="">Mọi dạng</option>${Object.entries(TYPE_NAME).map(([k, v]) => `<option value="${k}" ${F.t === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
       <select class="inp" id="fl"><option value="">Mọi mức độ</option>${Object.entries(LEVEL_NAME).map(([k, v]) => `<option value="${k}" ${F.lv === k ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
     <div id="list" class="stack"></div>`;
@@ -76,14 +76,14 @@ function editor() {
   let t = 'mc';
   const m = modal({ title: 'Thêm câu hỏi', wide: true, body: `<div class="stack" style="gap:12px">
     <div class="row"><label class="field" style="flex:1;min-width:150px"><span>Dạng câu</span><select class="inp" id="t">${Object.entries(TYPE_NAME).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></label>
-      <label class="field" style="flex:2;min-width:200px"><span>Mô-đun</span><select class="inp" id="m">${MODULES.map(x => `<option value="${x.code}">${x.bai} – ${esc(x.title)}</option>`).join('')}</select></label>
+      <label class="field" style="flex:2;min-width:200px"><span>Mô-đun</span><select class="inp" id="m">${modsOf(D.cls()?.grade).map(x => `<option value="${x.code}">${x.bai} – ${esc(x.title)}</option>`).join('')}</select></label>
       <label class="field" style="flex:1;min-width:120px"><span>Mức độ</span><select class="inp" id="lv"><option value="B">Biết</option><option value="H">Hiểu</option><option value="V">Vận dụng</option></select></label></div>
     <label class="field"><span>Mã mục tiêu</span><select class="inp mono" id="o"></select></label>
     <label class="field"><span>Câu hỏi / phần dẫn</span><textarea class="inp" id="q" rows="3"></textarea></label>
     <div id="body"></div>
     <label class="field"><span>Giải thích đáp án</span><textarea class="inp" id="x" rows="2"></textarea></label><div class="err-msg" id="er"></div></div>`, foot: '<button class="btn pri" id="ok">Lưu câu hỏi</button>' });
   const E = s => m.el.querySelector(s);
-  const objs = () => { const md = MOD[E('#m').value]; const chap = md?.code; const pre = Object.keys(OBJ).filter(o => o.startsWith('DL10.')); E('#o').innerHTML = pre.map(o => `<option value="${o}">${o} – ${esc(OBJ[o].slice(0, 90))}</option>`).join(''); const first = allQ(D.cls()).find(q => q.m === chap)?.o; if (first) E('#o').value = first; };
+  const objs = () => { const md = MOD[E('#m').value]; const chap = md?.code; const pre = Object.keys(OBJ).filter(o => o.startsWith('DL' + (D.cls()?.grade || 10) + '.')); E('#o').innerHTML = pre.map(o => `<option value="${o}">${o} – ${esc(OBJ[o].slice(0, 90))}</option>`).join(''); const first = allQ(D.cls()).find(q => q.m === chap)?.o; if (first) E('#o').value = first; };
   const body = () => { t = E('#t').value; E('#body').innerHTML = t === 'mc' ? `<div class="grid g2" style="gap:8px">${'ABCD'.split('').map((l, i) => `<label class="field"><span>Phương án ${l}</span><input class="inp" data-a="${i}"></label>`).join('')}</div><label class="field" style="margin-top:8px;max-width:200px"><span>Đáp án đúng</span><select class="inp" id="k">${'ABCD'.split('').map((l, i) => `<option value="${i}">${l}</option>`).join('')}</select></label>`
     : t === 'ds' ? `<div class="stack" style="gap:8px">${'abcd'.split('').map((l, i) => `<div class="row" style="flex-wrap:nowrap"><b class="mono">${l})</b><input class="inp" data-a="${i}" placeholder="Nhận định ${l}"><select class="inp" data-k="${i}" style="width:100px"><option value="1">Đúng</option><option value="0">Sai</option></select></div>`).join('')}</div>`
     : t === 'tln' ? `<div class="row"><label class="field"><span>Đáp án (số)</span><input class="inp mono" id="k" placeholder="13,4"></label><label class="field"><span>Sai số cho phép</span><input class="inp mono" id="tol" value="0"></label><label class="field"><span>Đơn vị</span><input class="inp" id="unit" placeholder="°C"></label></div>`

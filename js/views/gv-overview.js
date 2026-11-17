@@ -2,7 +2,7 @@
 import * as D from '../core/data.js';
 import { esc, pct, dd, rel, n1, avg, initials } from '../core/util.js';
 import { ic } from '../core/icons.js';
-import { MODULES, MOD, ERR } from '../core/qbank.js';
+import { modsOf, MOD, ERR } from '../core/qbank.js';
 import { classSummary } from '../../app/analytics.js';
 import { progress, testResults } from '../core/insight.js';
 import { heatColor, heatText, line } from '../core/charts.js';
@@ -13,7 +13,7 @@ export default {
   onData: why => ['attempt', 'module', 'sub', 'test', 'class', 'storage'].includes(why.type),
   render(el, ctx) {
     const c = D.cls(); const S = D.students(c); const view = D.analyticsView(c); const cs = classSummary(view);
-    const now = Date.now(); const openMods = MODULES.filter(m => c.modules[m.code]?.state === 'open');
+    const now = Date.now(); const openMods = modsOf(c.grade).filter(m => c.modules[m.code]?.state === 'open');
     const active7 = new Set([...c.events, ...c.attempts].filter(x => now - x.ts < 7 * 864e5).map(x => x.s)).size;
     const prog = S.map(s => progress(c, s.id)); const avgProg = avg(prog.map(p => p.pctAvail));
     const done = c.tests.filter(t => t.status !== 'draft'); const lastT = done.filter(t => testResults(c, t).rows.some(r => r.score10 != null)).sort((a, b) => (b.date || 0) - (a.date || 0))[0];

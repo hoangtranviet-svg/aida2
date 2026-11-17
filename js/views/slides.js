@@ -2,7 +2,7 @@
 import * as D from '../core/data.js';
 import { $, esc, dd, toast, modal, uid } from '../core/util.js';
 import { ic } from '../core/icons.js';
-import { MODULES, MOD } from '../core/qbank.js';
+import { modsOf, MOD } from '../core/qbank.js';
 import { confirmInline } from './parts.js';
 
 const KIND = { images: 'Ảnh slide', pdf: 'Tệp PDF', link: 'Liên kết', text: 'Soạn nhanh' };
@@ -32,7 +32,7 @@ function addDialog() {
   let kind = 'images';
   const m = modal({ title: 'Thêm bài giảng', wide: true, body: `<div class="stack" style="gap:14px">
     <div class="row"><label class="field" style="flex:2;min-width:220px"><span>Tên bài giảng</span><input class="inp" id="t" placeholder="Bài 10 – Thực hành đọc bản đồ các đới khí hậu"></label>
-      <label class="field" style="flex:1;min-width:180px"><span>Gắn với mô-đun</span><select class="inp" id="m"><option value="">Chung cho lớp</option>${MODULES.map(x => `<option value="${x.code}">${x.bai} – ${esc(x.title)}</option>`).join('')}</select></label></div>
+      <label class="field" style="flex:1;min-width:180px"><span>Gắn với mô-đun</span><select class="inp" id="m"><option value="">Chung cho lớp</option>${modsOf(D.cls()?.grade).map(x => `<option value="${x.code}">${x.bai} – ${esc(x.title)}</option>`).join('')}</select></label></div>
     <div class="tabs" id="tabs">${Object.entries(KIND).map(([k, v]) => `<button type="button" data-k="${k}" class="${k === kind ? 'on' : ''}">${v}</button>`).join('')}</div>
     <div id="pane"></div><div class="err-msg" id="er"></div></div>`, foot: `<button class="btn pri" id="ok">${ic('upload')} Đưa lên lớp</button>` });
   const E = s => m.el.querySelector(s);

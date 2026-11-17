@@ -1,11 +1,19 @@
 // Ngân hàng câu hỏi hợp nhất + chấm điểm + sinh đề theo ma trận (CV 7991)
-import { BANK, ERR, MODULES } from '../../app/bank.js';
+import { BANK, ERR, MODULES as M10 } from '../../app/bank.js';
+import { MODULES_11, MODULES_12, OBJ_11_12, GRADES } from '../../app/curriculum.js';
 import { EXTRA, LEVEL, LEVEL_NAME, TYPE_NAME } from '../../app/bank2.js';
-import { OBJ, CHAP } from '../../app/objectives.js';
+import { OBJ as OBJ10, CHAP } from '../../app/objectives.js';
 import { toNum } from './util.js';
-export { ERR, MODULES, LEVEL_NAME, TYPE_NAME, OBJ, CHAP };
+// Mô-đun theo khối lớp. MODULES giữ nguyên là lớp 10 (dữ liệu mẫu, trang giới thiệu).
+const MODULES = M10.map(m => ({ ...m, grade: 10 }));
+export const ALL_MODULES = [...MODULES, ...MODULES_11, ...MODULES_12];
+export const modsOf = (g = 10) => { const k = [11, 12].includes(+g) ? +g : 10; return ALL_MODULES.filter(m => m.grade === k); };
+const OBJ = { ...OBJ10, ...OBJ_11_12 };
+// địa chỉ học liệu của một mô-đun (mô hình 3D hoặc bài giảng slide); null nếu chưa có
+export const matOf = m => m?.lab ? { kind: '3d', url: 'lab.html#' + m.lab, name: 'mô hình 3D' } : m?.deck ? { kind: 'deck', url: 'deck.html?embed=1#' + m.deck, name: 'bài giảng' } : null;
+export { ERR, MODULES, LEVEL_NAME, TYPE_NAME, OBJ, CHAP, GRADES };
 
-export const MOD = Object.fromEntries(MODULES.map(m => [m.code, m]));
+export const MOD = Object.fromEntries(ALL_MODULES.map(m => [m.code, m]));
 const BASE = [...BANK.map(q => ({ ...q, t: 'mc', lv: LEVEL[q.id], src: 'bank' })), ...EXTRA.map(q => ({ ...q, src: 'bank' }))];
 
 let cacheKey = null, cache = null;

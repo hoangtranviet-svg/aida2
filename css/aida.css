@@ -528,3 +528,4 @@ details[open]>summary::before{content:"▾ "}
 .md-detail .pill svg{width:12px;height:12px}
 .mod-stat{border:0;background:none;padding:0;font:inherit;font-size:12.5px;color:var(--ocean);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;cursor:pointer}
 .mod-stat:hover{text-decoration-style:solid}
+.study.solo{grid-template-columns:minmax(0,1fr)}
