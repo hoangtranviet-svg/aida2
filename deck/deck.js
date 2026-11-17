@@ -13,7 +13,8 @@ export async function runDeck(id) {
   let def;
   try { def = (await import(`./decks/${id}.js`)).default; } catch (e) { $('#loading').textContent = 'Không tìm thấy bài giảng “' + id + '”.'; return; }
   document.title = def.title + ' – AIDA 2.0';
-  $('#bar h1').textContent = def.title; $('#bar .code').textContent = def.code;
+  $('#bar h1').textContent = def.title;
+  if (def.pptx && !embedded) { const a = document.createElement('a'); a.className = 'btn'; a.href = def.pptx; a.download = ''; a.textContent = 'Tải PPTX'; a.title = 'Tải tệp PowerPoint gốc'; $('#fullBtn').before(a); } $('#bar .code').textContent = def.code;
   const S = def.slides; const N = S.length; let cur = 0, frag = 0;
   const seen = new Set(), answered = {}; let completed = false; const t0 = Date.now();
 
@@ -30,7 +31,7 @@ export async function runDeck(id) {
   const els = S.map((s, i) => {
     const el = document.createElement('section'); el.className = 'slide ' + (s.kind === 'cover' ? 'cover ' : '') + (s.kind === 'quiz' || s.kind === 'truefalse' ? 'quiz' : '');
     el.innerHTML = KIND[s.kind] ? KIND[s.kind](s, i, def) : `<div class="in">${s.html || ''}</div>`;
-    if (s.kind !== 'cover') el.insertAdjacentHTML('beforeend', `<div class="s-foot"><span class="src">${s.src ? 'Nguồn: ' + esc(s.src) : ''}</span><span>${esc(def.short || def.title)} · ${i + 1}/${N}</span></div>`);
+    if (s.kind !== 'cover' && s.kind !== 'img') el.insertAdjacentHTML('beforeend', `<div class="s-foot"><span class="src">${s.src ? 'Nguồn: ' + esc(s.src) : ''}</span><span>${esc(def.short || def.title)} · ${i + 1}/${N}</span></div>`);
     sc.append(el); return el;
   });
   els.forEach((el, i) => { const s = S[i]; MOUNT[s.kind]?.(el, s, i, api); s.mount?.(el, api, i); });
@@ -95,6 +96,7 @@ export async function runDeck(id) {
 const head = s => `${s.kicker ? `<div class="s-kick">${s.kicker}</div>` : ''}${s.title ? `<h2 class="s-h">${s.title}</h2>` : ''}`;
 const bullets = (b, frag = true) => `<ul class="b">${b.map(x => Array.isArray(x) ? `<li class="${frag ? 'frag' : ''}">${x[0]}<ul>${x.slice(1).map(y => `<li>${y}</li>`).join('')}</ul></li>` : `<li class="${frag ? 'frag' : ''}">${x}</li>`).join('')}</ul>`;
 const KIND = {
+  img: (s, i) => `<img class="full" src="${s.src}" alt="${esc(s.alt || '')}" ${i > 2 ? 'loading="lazy"' : ''} draggable="false">`,
   cover: (s, i, d) => `${s.art || ''}<div class="in"><div class="s-kick">${s.kicker || ''}</div><h1>${s.title}</h1><div class="sub">${s.sub || ''}</div></div><div class="meta">${s.meta || ''}</div>`,
   goals: s => `<div class="in">${head(s)}<div class="s-body">${bullets(s.items, false)}${s.codes ? `<div style="align-self:end">${s.codes.map(c => `<span class="tag">${c}</span>`).join('')}</div>` : ''}</div></div>`,
   content: s => `<div class="in">${head(s)}<div class="s-body ${s.fig ? (s.layout || 'split') : ''}"><div>${s.bullets ? bullets(s.bullets) : ''}${s.after || ''}</div>${s.fig ? `<div style="min-height:0;display:flex;flex-direction:column">${s.fig}</div>` : ''}</div></div>`,

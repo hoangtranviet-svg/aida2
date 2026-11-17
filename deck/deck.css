@@ -156,3 +156,7 @@ body.present .reveal{display:inline-block}
 .mind .node p{margin:0;font-size:21px;line-height:1.4;color:#33434e}
 
 @media (prefers-color-scheme: dark){ #bar,#nav{background:#070d16} }
+
+/* trang ảnh (bài giảng chuyển từ PowerPoint) */
+.slide img.full{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;user-select:none}
+#bar a.btn{text-decoration:none}
