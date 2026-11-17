@@ -19,6 +19,6 @@ export const register = f('register'), login = f('login'), logout = f('logout'),
 export const classByCode = f('classByCode'), myClasses = f('myClasses'), cls = f('cls'), switchClass = f('switchClass');
 export const createSampleClass = f('createSampleClass');
 export const createClass = f('createClass'), joinClass = f('joinClass'), addStudents = f('addStudents'), students = f('students');
-export const teachers = f('teachers'), approveTeacher = f('approveTeacher');
+export const teachers = f('teachers'), approveTeacher = f('approveTeacher'), adminOverview = f('adminOverview');
 export const resetDemo = f('resetDemo'), putFile = f('putFile'), getFile = f('getFile'), delFile = f('delFile'), analyticsView = f('analyticsView');
 export const act = new Proxy({}, { get: (_, k) => (...a) => B.act[k](...a) });

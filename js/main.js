@@ -20,7 +20,7 @@ const NAV = {
 // phiên bản (từ index.html) để trình duyệt tải lại màn hình mới sau mỗi lần cập nhật
 const VQ = (v => v ? '?v=' + v : '')(new URL(import.meta.url).searchParams.get('v'));
 const VIEWS = {
-  'gioi-thieu': () => import('./views/landing.js' + VQ), 'dang-nhap': () => import('./views/auth.js' + VQ), 'dang-ki': () => import('./views/auth.js' + VQ), 'bat-dau': () => import('./views/auth.js' + VQ), 'cho-duyet': () => import('./views/auth.js' + VQ), 'quan-tri': () => import('./views/admin.js' + VQ),
+  'gioi-thieu': () => import('./views/landing.js' + VQ), 'dang-nhap': () => import('./views/auth.js' + VQ), 'dang-ki': () => import('./views/auth.js' + VQ), 'bat-dau': () => import('./views/auth.js' + VQ), 'cho-duyet': () => import('./views/auth.js' + VQ), 'quan-tri': () => import('./views/admin.js' + VQ), 'quan-tri-gv': () => import('./views/admin-gv.js' + VQ),
   'gv-tong-quan': () => import('./views/gv-overview.js' + VQ), 'gv-lop': () => import('./views/gv-class.js' + VQ), 'gv-mo-dun': () => import('./views/gv-modules.js' + VQ), 'gv-bang-tin': () => import('./views/board.js' + VQ),
   'gv-bai-giang': () => import('./views/slides.js' + VQ), 'gv-ngan-hang': () => import('./views/gv-bank.js' + VQ), 'gv-tao-de': () => import('./views/gv-testgen.js' + VQ),
   'gv-kiem-tra': () => import('./views/gv-tests.js' + VQ), 'gv-phan-tich': () => import('./views/gv-analysis.js' + VQ), 'gv-thoi-quen': () => import('./views/gv-habits.js' + VQ), 'gv-nhan-xet': () => import('./views/gv-comments.js' + VQ), 'gv-bao-cao': () => import('./views/gv-reports.js' + VQ),
@@ -58,10 +58,10 @@ async function render() {
   if (u && (route === 'dang-nhap' || route === 'dang-ki')) route = homeOf(u);
   if (u && route.startsWith('gv-') && u.role !== 'gv') route = homeOf(u);
   if (u && route.startsWith('hs-') && u.role !== 'hs') route = homeOf(u);
-  if (u && route === 'quan-tri' && !u.isAdmin) route = homeOf(u);
+  if (u && (route === 'quan-tri' || route === 'quan-tri-gv') && !u.isAdmin) route = homeOf(u);
   if (u && u.role === 'gv' && !u.approved) route = 'cho-duyet';
   else if (u && route === 'cho-duyet') route = homeOf(u);
-  if (u && !D.cls() && !PUBLIC.includes(route) && !['cai-dat', 'cho-duyet', 'quan-tri'].includes(route)) route = 'bat-dau';
+  if (u && !D.cls() && !PUBLIC.includes(route) && !['cai-dat', 'cho-duyet', 'quan-tri', 'quan-tri-gv'].includes(route)) route = 'bat-dau';
   if (route !== (location.hash.slice(1) || '')) history.replaceState(null, '', '#' + route);
   cur.cleanup?.(); cur.cleanup = null;
   cur.route = route;
@@ -91,7 +91,7 @@ function paintShell(u) {
       <div class="side-head"><a class="logo" href="#${homeOf(u)}">${LOGO}<span><b>AIDA 2.0</b><small>ĐỊA LÍ · LỚP HỌC SỐ</small></span></a></div>
       ${c ? `<button class="cls-card" data-act="classes" type="button"><div style="min-width:0"><div class="k">Mã lớp · ${esc(c.code)}</div><b>${esc(c.name)}</b></div><span class="chev">${ic('chevD')}</span></button>` : ''}
       <nav class="nav">${nav.map(([g, items]) => `<div class="nav-g">${g}</div>` + items.map(([r, t, i]) => `<a href="#${r}" class="${cur.route === r ? 'on' : ''}" data-r="${r}">${ic(i)}<span>${t}</span><span class="badge" data-badge="${r}" hidden></span></a>`).join('')).join('')}
-        ${u.isAdmin ? `<div class="nav-g">Quản trị</div><a href="#quan-tri" class="${cur.route === 'quan-tri' ? 'on' : ''}" data-r="quan-tri">${ic('shield')}<span>Duyệt giáo viên</span><span class="badge" data-badge="quan-tri" hidden></span></a>` : ''}
+        ${u.isAdmin ? `<div class="nav-g">Quản trị</div><a href="#quan-tri" class="${cur.route === 'quan-tri' ? 'on' : ''}" data-r="quan-tri">${ic('shield')}<span>Duyệt giáo viên</span><span class="badge" data-badge="quan-tri" hidden></span></a><a href="#quan-tri-gv" class="${cur.route === 'quan-tri-gv' ? 'on' : ''}" data-r="quan-tri-gv">${ic('users')}<span>Giáo viên & hoạt động</span></a>` : ''}
         <div class="nav-g">Tài khoản</div><a href="#cai-dat" class="${cur.route === 'cai-dat' ? 'on' : ''}">${ic('settings')}<span>Cài đặt & dữ liệu</span></a></nav>
       <div class="side-foot"><span class="av ${u.role === 'gv' ? 'gv' : ''}">${esc(initials(u.name))}</span><div class="who"><b>${esc(u.name)}</b><span>${u.role === 'gv' ? 'Giáo viên' : 'Học sinh'}</span></div>
         <button class="icon-btn" data-act="theme" aria-label="Đổi giao diện sáng/tối" data-tip="Giao diện sáng / tối">${ic(document.documentElement.dataset.theme === 'dark' ? 'sun' : 'moon')}</button>

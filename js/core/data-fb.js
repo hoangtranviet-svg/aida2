@@ -12,6 +12,7 @@
 //   classes/{cid}/marks/{uid}            điểm bài giấy: { [tid]: [điểm từng câu] }
 //   classes/{cid}/notes/{uid}            nhận xét của GV
 //   classes/{cid}/reads/{uid}            thời điểm đọc bảng tin
+import { wrapActs, makeBuffer } from './gvlog.js';
 const V = '10.12.2';
 const SDK = n => `https://www.gstatic.com/firebasejs/${V}/firebase-${n}.js`;
 let A, Au, F, app, auth, fs, CFG;
@@ -54,6 +55,8 @@ async function onUser(u) {
   const s = await F.getDoc(F.doc(fs, 'users', u.uid)).catch(() => null);
   const d = s?.exists() ? s.data() : { name: u.displayName || u.email, email: u.email, role: 'hs', classes: [] };
   user = { uid: u.uid, name: d.name, email: d.email, role: d.role, classes: d.classes || [], created: d.created, approved: d.approved === true, rejected: !!d.rejected };
+  // ghi thời điểm truy cập gần nhất (tối đa 1 lần / 20 phút) để quản trị viên theo dõi
+  if (s?.exists()) { const k = 'aida2-seen-' + u.uid, last = +lsGet(k) || 0; if (Date.now() - last > 20 * 60e3) { lsSet(k, Date.now()); F.updateDoc(F.doc(fs, 'users', u.uid), { lastSeen: Date.now(), visits: F.increment(1) }).catch(() => {}); } }
   // theo dõi trạng thái phê duyệt của chính mình (GV chờ duyệt được mở khoá ngay khi quản trị viên duyệt)
   if (user.role === 'gv' && !isAdminEmail(user.email)) uUnsubs.push(F.onSnapshot(F.doc(fs, 'users', u.uid), s2 => { if (!s2.exists() || !user) return; const x = s2.data(); const ch = (x.approved === true) !== user.approved || !!x.rejected !== user.rejected; user.approved = x.approved === true; user.rejected = !!x.rejected; if (ch) emit({ type: 'approval' }, false); }, () => {}));
   // quản trị viên: danh sách tài khoản giáo viên
@@ -68,6 +71,19 @@ const pubU = x => ({ ...x, isAdmin: isAdminEmail(x.email), approved: x.role !== 
 export const me = () => user && pubU({ ...user, classes: classList.map(c => c.id) });
 export const teachers = () => TEACHERS.map(pubU).sort((a, b) => (a.approved ? 1 : 0) - (b.approved ? 1 : 0) || (b.created || 0) - (a.created || 0));
 export async function approveTeacher(id, ok) { await F.updateDoc(F.doc(fs, 'users', id), { approved: !!ok, rejected: !ok, reviewedAt: Date.now(), reviewedBy: user.email }).catch(e => { throw new Error('Chưa duyệt được: ' + (e.code || e.message)); }); }
+// toàn bộ lớp và hoạt động của mọi giáo viên – chỉ quản trị viên (quy tắc Firestore cũng chặn người khác)
+export async function adminOverview() {
+  if (!isAdminEmail(user?.email)) throw new Error('Chỉ quản trị viên được xem trang này.');
+  let cs; try { cs = await F.getDocs(F.collection(fs, 'classes')); } catch (e) { const er = new Error(e.code === 'permission-denied' ? 'RULES' : (e.message || 'Không tải được dữ liệu')); er.code = e.code; throw er; }
+  const rows = d => d.docs.map(x => ({ id: x.id, ...x.data() }));
+  const classes = await Promise.all(cs.docs.map(async d => {
+    const cid = d.id; const g = n => F.getDocs(F.collection(fs, 'classes', cid, n)).then(rows).catch(() => []);
+    const [members, tests, questions, posts, slides, subs, notes, logs, gvlog] = await Promise.all(['members', 'tests', 'questions', 'posts', 'slides', 'subs', 'notes', 'logs', 'gvlog'].map(g));
+    return { id: cid, ...d.data(), members, tests, questions, posts, slides, subs, notes,
+      events: logs.flatMap(l => l.events || []), attempts: logs.flatMap(l => l.attempts || []), gvlog: gvlog.flatMap(l => l.log || []) };
+  }));
+  return { teachers: TEACHERS.map(pubU), classes, at: Date.now() };
+}
 export const userName = id => members[id]?.name || (C && id === C.teacher ? C.teacherName : user?.uid === id ? user.name : 'Không rõ');
 export const userOf = id => members[id] ? { uid: id, ...members[id], role: 'hs' } : (user?.uid === id ? me() : null);
 
@@ -118,7 +134,7 @@ export async function createClass({ name, grade = 10, year }) {
   b.set(ref, { name: name.trim(), grade, year: year || '2026–2027', code, teacher: user.uid, teacherName: user.name, modules: {}, levels: {}, qv: 0, created: Date.now() });
   b.set(F.doc(fs, 'codes', code), { cid: ref.id });
   b.update(F.doc(fs, 'users', user.uid), { classes: F.arrayUnion(ref.id) });
-  await b.commit(); classList.push({ id: ref.id, name: name.trim(), code }); lsSet('aida2-fb-cid-' + user.uid, ref.id); await openClass(ref.id);
+  await b.commit(); classList.push({ id: ref.id, name: name.trim(), code }); lsSet('aida2-fb-cid-' + user.uid, ref.id); await openClass(ref.id); gvLog({ t: 'class', d: `tạo lớp ${name.trim()}` });
   return C;
 }
 // Lớp mẫu 10KHXH5: ghi toàn bộ dữ liệu mô phỏng vào Firestore (học sinh mẫu không có tài khoản đăng nhập)
@@ -174,6 +190,7 @@ export async function addStudents(rows, password) {
     } catch (e) { skipped.push({ ...r, reason: ERRS[e.code] || e.message }); }
   }
   A.deleteApp(app2).catch(() => {});
+  if (made) gvLog({ t: 'member', d: `thêm ${made} tài khoản học sinh` });
   return { made, skipped };
 }
 export const students = (c = C) => c === C ? (C?.members || []).map(id => ({ id, name: members[id]?.name || 'Học sinh', email: members[id]?.email || '' })).sort((a, b) => a.name.split(' ').pop().localeCompare(b.name.split(' ').pop(), 'vi')) : [];
@@ -203,7 +220,7 @@ function rebuild() {
   C.tests = (base.tests || []).map(t => { if (t.kind !== 'paper') return t; const scores = {}; Object.entries(base.marks || {}).forEach(([sid, m]) => { if (m[t.id]) scores[sid] = m[t.id]; }); return { ...t, scores }; });
 }
 async function openClass(cid) {
-  detach(); flush(); base = { logs: {}, marks: {}, tests: [] }; pendingEv = [];
+  gvBuf.flush(); detach(); flush(); base = { logs: {}, marks: {}, tests: [] }; pendingEv = [];
   Object.keys(members).forEach(k => delete members[k]);
   C = { id: cid, members: [], modules: {}, levels: {}, events: [], attempts: [], tests: [], subs: [], slides: [], posts: [], notes: {}, questions: [], read: {} };
   const cref = F.doc(fs, 'classes', cid); const col = n => F.collection(fs, 'classes', cid, n);
@@ -237,6 +254,12 @@ async function openClass(cid) {
   await Promise.all(jobs); rebuild();
 }
 
+// ---------- nhật kí hoạt động của giáo viên ----------
+let gvCid = null;
+const gvBuf = makeBuffer(list => { if (!gvCid) return; F.setDoc(F.doc(fs, 'classes', gvCid, 'gvlog', ym()), { log: F.arrayUnion(...list.map(clean)) }, { merge: true }).catch(() => {}); });
+const gvLog = e => { if (!C || C.teacher !== uidCur) return; if (gvCid !== C.id) { gvBuf.reset(); gvCid = C.id; } gvBuf.push(e); };
+addEventListener('pagehide', () => gvBuf.flush()); document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') gvBuf.flush(); });
+
 // ---------- ghi dữ liệu ----------
 let evBuf = [], evT = 0;
 function flush() {
@@ -267,6 +290,7 @@ export const act = {
   newCode: () => { const old = C.code, code = code6(); const b = F.writeBatch(fs); b.update(cref(), { code }); b.set(F.doc(fs, 'codes', code), { cid: C.id }); b.delete(F.doc(fs, 'codes', old)); b.commit().catch(fail('mã lớp')); return code; },
   renameClass: name => F.updateDoc(cref(), { name }).catch(fail('tên lớp')),
 };
+wrapActs(act, gvLog);
 
 // ---------- ảnh bài giảng: lưu trong Firestore (không cần gói trả phí của Storage) ----------
 async function toJpeg(blob, maxW = 1600) {

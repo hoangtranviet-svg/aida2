@@ -2,6 +2,7 @@
 // Chế độ "demo": lưu trong trình duyệt (localStorage + IndexedDB), đồng bộ tức thì giữa các thẻ bằng BroadcastChannel.
 // Khi nối máy chủ (Firebase), chỉ thay phần thân các hàm trong tệp này; giao diện gọi đúng các hàm như cũ.
 import { store, uid } from './util.js';
+import { wrapActs } from './gvlog.js';
 
 export const MODE = 'demo';
 export const CAN = { reset: true, files: 'local' };
@@ -62,7 +63,7 @@ export async function register({ name, email, password, role, code }) {
 export async function login({ email, password, keep = true }) {
   const u = findEmail(email); if (!u) throw new Error('Không có tài khoản với email này.');
   if (u.pw !== await hash(password)) throw new Error('Mật khẩu chưa đúng.');
-  session = { uid: u.uid, cid: u.classes[0] || null }; saveSession(keep); return pub(u);
+  session = { uid: u.uid, cid: u.classes[0] || null }; saveSession(keep); u.lastSeen = Date.now(); u.visits = (u.visits || 0) + 1; persist({ type: 'user', silent: true }); return pub(u);
 }
 export function logout() { session = null; try { sessionStorage.removeItem(SKEY); } catch (e) { /* */ } store.set(SKEY + '-keep', null); }
 
@@ -76,7 +77,7 @@ export function emptyClass(o) { return { id: uid('c'), code: code6(), created: D
 export async function createClass({ name, grade = 10, year }) {
   const u = db.users[session.uid]; if (!me().approved) throw new Error('Tài khoản giáo viên chưa được phê duyệt.'); const c = emptyClass({ name: name.trim(), grade, year: year || '2026–2027', teacher: u.uid });
   while (classByCode(c.code)) c.code = code6();
-  db.classes[c.id] = c; u.classes.push(c.id); session.cid = c.id; saveSession(); persist({ type: 'class' }); return c;
+  db.classes[c.id] = c; u.classes.push(c.id); session.cid = c.id; saveSession(); persist({ type: 'class' }); gvLog({ t: 'class', d: `tạo lớp ${c.name}` }); return c;
 }
 // lớp mẫu 10KHXH5 đầy đủ dữ liệu (học sinh mẫu đăng nhập bằng mật khẩu "hocsinh")
 export async function createSampleClass(onStep) {
@@ -103,7 +104,7 @@ export async function addStudents(rows, password) {
     if (!u) { u = { uid: uid('u'), name, email, role: 'hs', pw, classes: [], created: Date.now() }; db.users[u.uid] = u; made.push(u); }
     if (!c.members.includes(u.uid)) c.members.push(u.uid); if (!u.classes.includes(c.id)) u.classes.push(c.id);
   }
-  persist({ cid: c.id, type: 'class' }); return { made: made.length, skipped };
+  persist({ cid: c.id, type: 'class' }); if (made.length) gvLog({ t: 'member', d: `thêm ${made.length} tài khoản học sinh` }); return { made: made.length, skipped };
 }
 export async function changePassword(oldPw, newPw) {
   const u = db.users[session.uid]; if (u.pw !== await hash(oldPw)) throw new Error('Mật khẩu hiện tại chưa đúng.');
@@ -134,6 +135,22 @@ export const act = {
   newCode: () => mut(c => { c.code = code6(); return c.code; }, { type: 'class' }),
   renameClass: name => mut(c => { c.name = name; }, { type: 'class' }),
 };
+// nhật kí hoạt động của giáo viên (gộp thao tác lặp lại trong 10 phút)
+function gvLog(e) {
+  const c = cls(); if (!c || c.teacher !== session?.uid) return; const L = (c.gvlog ||= []); const now = Date.now(); const last = L[L.length - 1];
+  if (last && last.t === e.t && (last.d === e.d || e.t === 'question') && now - last.ts < 10 * 60e3) { last.n = (last.n || 1) + 1; last.ts = now; } else L.push({ ts: now, ...e, n: 1 });
+  if (L.length > 3000) L.splice(0, 500); persist({ cid: c.id, type: 'gvlog', silent: true });
+}
+wrapActs(act, gvLog);
+export async function adminOverview() {
+  if (!me()?.isAdmin) throw new Error('Chỉ quản trị viên được xem trang này.');
+  const U = id => db.users[id];
+  const classes = Object.values(db.classes).map(c => ({ ...c,
+    members: (c.members || []).map(id => ({ id, name: U(id)?.name || 'Học sinh', email: U(id)?.email || '', joined: U(id)?.created })),
+    notes: Object.entries(c.notes || {}).map(([id, n]) => ({ id, ...n })), gvlog: c.gvlog || [] }));
+  const teachers = Object.values(db.users).filter(u => u.role === 'gv').map(u => ({ ...pub(u), lastSeen: u.lastSeen, visits: u.visits, reviewedAt: u.reviewedAt, reviewedBy: u.reviewedBy }));
+  return { teachers, classes, at: Date.now() };
+}
 export async function resetDemo() { const { seedDB } = await import('./seed.js'); db = await seedDB(hash); session = null; logout(); store.set(KEY, db); persist({ type: 'reset' }); }
 
 // ---------- tệp bài giảng (ảnh, PDF) – IndexedDB ----------
